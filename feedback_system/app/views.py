@@ -114,6 +114,17 @@ def faculty_dashboard(request):
 					context[form][teacher_subject.subject]['responses'][question] = {}
 					temp = list(FeedbackResponse.objects.filter(question=question).values('question').annotate(avg =Avg('answer')))
 					context[form][teacher_subject.subject]['responses'][question]['overall'] = temp[0]['avg']
+					context[form][teacher_subject.subject]['responses'][question]['scores'] = {}
+					maxv = 0
+					for i in range(1,6):
+						context[form][teacher_subject.subject]['responses'][question]['scores'][i] = {}
+						context[form][teacher_subject.subject]['responses'][question]['scores'][i]['val'] = FeedbackResponse.objects.filter(question=question,answer=i).count()
+						if maxv < context[form][teacher_subject.subject]['responses'][question]['scores'][i]['val']:
+							maxv = context[form][teacher_subject.subject]['responses'][question]['scores'][i]['val']
+					print(context[form][teacher_subject.subject]['responses'][question]['scores'])
+					for i in range(1,6):
+						context[form][teacher_subject.subject]['responses'][question]['scores'][i]['perc'] = round((context[form][teacher_subject.subject]['responses'][question]['scores'][i]['val']/maxv)*100,2)
+
 					for data in temp:
 						if(float(data['avg']) > 3.5):#not working
 							context[form][teacher_subject.subject]['strength'].add(question.tag)
@@ -123,7 +134,7 @@ def faculty_dashboard(request):
 					for i in range(1,6):
 							scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
 					
-					context[form][teacher_subject.subject]['responses'][question]['scores'] = scores
+					#context[form][teacher_subject.subject]['responses'][question]['scores'] = scores
 			responses = TextualResponse.objects.filter(feedback_form=form)
 			sentiments = {}
 			for response in responses:
