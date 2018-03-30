@@ -15,10 +15,21 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from .final_new import get_sentiment, get_tags
+from .final_new import get_sentiment, get_tags, get_sentiments
 
 from django.db.models import Count,Sum,Avg,IntegerField,Case,When
 from django.shortcuts import render_to_response
+
+#sentiment
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+analyzer = SentimentIntensityAnalyzer()
+
+def get_sentiment(sentence):
+	vs = analyzer.polarity_scores(sentence)
+	vs.pop('compound')
+	type = max(vs.items(),key=lambda x:x[1])[0]
+	print("Sentiment is",type)
+	return type
 
 
 ACADEMICS = QuestionType.objects.get(title='Academics')
@@ -72,14 +83,28 @@ def faculty_dashboard(request):
 		context[form] = {}
 		for teacher_subject in teacher_subjects:
 			context[form][teacher_subject.subject] = {}
-			avg = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form).values('teacher_subject').annotate(avg =Avg('answer',output_field=IntegerField())))
+			context[form][teacher_subject.subject]['overall'] = {}
+			avg = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form).values('teacher_subject').annotate(avg =Avg('answer')))
 			for data in avg:
 				temp =None
 				for key,value in data.items():
 					if(key == 'avg'):
 						temp =value
-				data['counter_avg'] =5-temp
-			context[form][teacher_subject.subject]['overall'] = avg
+				data['avg'] = round(temp,2)
+				data['counter_avg'] = 5-round(temp, 2)
+			context[form][teacher_subject.subject]['overall'] = {}
+			context[form][teacher_subject.subject]['overall']['avg'] = avg
+			context[form][teacher_subject.subject]['overall']['scores'] = {6:{'val':0,'perc':100}}
+			maxv = 0
+			for i in range(1, 6):
+				context[form][teacher_subject.subject]['overall']['scores'][i] = {}
+				context[form][teacher_subject.subject]['overall']['scores'][i]['val'] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject, question__feedback_form=form, answer=i).count()
+				if maxv < context[form][teacher_subject.subject]['overall']['scores'][i]['val']:
+					maxv = context[form][teacher_subject.subject]['overall']['scores'][i]['val']
+				context[form][teacher_subject.subject]['overall']['scores'][6]['val'] += context[form][teacher_subject.subject]['overall']['scores'][i]['val']
+				
+			for i in range(1, 6):
+				context[form][teacher_subject.subject]['overall']['scores'][i]['perc'] = int((context[form][teacher_subject.subject]['overall']['scores'][i]['val']/maxv)*100)
 
 			context[form][teacher_subject.subject]['responses'] = {}
 			context[form][teacher_subject.subject]['strength']=set()
@@ -101,6 +126,16 @@ def faculty_dashboard(request):
 						scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
 				
 				context[form][teacher_subject.subject]['responses'][question]['scores'] = scores
+		responses = TextualResponse.objects.filter(feedback_form=form)
+		sentiments = {}
+		for response in responses:
+			sentiments[response] = get_sentiments(response.answer)
+		print("Akshay sentiments:", sentiments)
+		# context = {
+		# "positive":pos,
+		# "negative":neg,
+		# }
+
 
 	#print(context)
 
@@ -365,9 +400,9 @@ def ajax_add_questions(request):
 	data = request.POST
 	q = Question(
 		text=data['text'],
-		tag=Tag.objects.get(pk=data['tagid']),
+		tag=Tag.objects.get(pk=int(data['tagid'])),
 		type=QuestionType.objects.get(title=data['type']),
-		feedback_form=FeedbackForm.objects.get(pk=data['form'])
+		feedback_form=FeedbackForm.objects.get(pk=int(data['form']))
 	)
 	q.save()
 	
@@ -378,11 +413,16 @@ def ajax_add_questions(request):
 def edit_form_question(request):
 	print(request.POST)
 	data = request.POST
+	tag_obj = None
+
+	if data['tagid'] != "":
+		tag_obj = Tag.objects.get(pk=int(data['tagid']))
+
 	q = Question(
 		text=data['text'],
-		tag=Tag.objects.get(pk=data['tagid']),
+		tag=tag_obj,
 		type=QuestionType.objects.get(title=data['type']),
-		feedback_form=FeedbackForm.objects.get(pk=data['formid'])
+		feedback_form=FeedbackForm.objects.get(pk=int(data['formid']))
 	)
 	q.save()
 	
@@ -581,7 +621,7 @@ def login(request):
 				elif (role == 'FACULTY'):
 					return redirect('faculty_dashboard')
 				elif (role =='AUDITOR'):
-					return redirect('auditor_profile')
+					return redirect('auditor_dashboard')
 				elif(role == 'COORDINATOR'):
 					return redirect('coordinator_dashboard')
 
@@ -603,7 +643,7 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
+            #messages.success(request, 'Your password was successfully updated!')
             role=authenticate_role(user)
 
             if(role == 'STUDENT'):
