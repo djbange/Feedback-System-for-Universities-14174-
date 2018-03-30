@@ -14,6 +14,50 @@
         html{
             font-family: 'Roboto Condensed', sans-serif;
         }
+        @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+        fieldset, label { margin: 0; padding: 0; }
+        body{ margin: 20px; }
+        h1 { font-size: 1.5em; margin: 10px; }
+
+        /****** Style Star Rating Widget *****/
+
+        .rating { 
+        border: none;
+        float: left;
+        }
+
+        .rating > input { display: none; } 
+        .rating > label:before { 
+        margin: 5px;
+        font-size: 1.25em;
+        font-family: FontAwesome;
+        display: inline-block;
+        content: "\f005";
+        }
+
+        .rating > .half:before { 
+        content: "\f089";
+        position: absolute;
+        }
+
+        .rating > label { 
+        color: #ddd; 
+        float: right; 
+        }
+
+        /***** CSS Magic to Highlight Stars on Hover *****/
+
+        .rating > input:checked ~ label, /* show gold star when clicked */
+        .rating:not(:checked) > label:hover, /* hover current star */
+        .rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
+
+        .rating > input:checked + label:hover, /* hover current star when changing rating */
+        .rating > input:checked ~ label:hover,
+        .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+        .rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
+
+
         .side-nav{
             margin-top: 75px;
             width: 20%;
@@ -96,6 +140,8 @@
     <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
     <script src="https://www.amcharts.com/lib/3/pie.js"></script>
 
+    
+
     <div class="navbar-fixed">
         <nav>
             <div class="nav-wrapper">
@@ -167,12 +213,17 @@
                 </div>
                 {% for subject,subdata in data.items %}
                 <div id="subject{{subject.id}}" class="col s12">
-                    <div class="row">
                         <div class="row">
                             <div class="col s12 m9 l10">
                                 <div id="subject_wise" class="section scrollspy">
                                     <div class="row">
-                                        <div class="col s4">
+                                        <div>
+                                            <div class="card-panel">
+                                                <span class="card-title">Overall</span>
+
+                                            </div>
+                                        </div>
+                                        <div>
                                             <div class="card-panel ">
                                                 
                                                 <table class="centered">
@@ -189,76 +240,31 @@
                                                         {% endfor %}
                                                     </tbody>
                                                 </table>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col s4">
-                                        <div class="card-panel ">
-                                            
-                                            <table class="centered">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="font-size: 30px; color: red;">Weaknesses</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for tag in subdata.weakness %}
-                                                    <tr>
-                                                        <td style="font-size: 20px;" >{{tag}}</td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                    </div>
-                                </div>
-                                <div class="col s4 ">
-                                            <div class="card-panel">
+                                        <div>
+                                            <div class="card-panel ">
                                                 
-                                                    <span class="card-title">Overall</span>
-                                                    <style> #chartdiv{{subject.id}} {
-                                                        width		: 100%;
-                                                        height		: 200px;
-                                                        font-size	: 11px;
-                                                         }
-                                                    </style>
-                                                    <script>
-                                                        var chart{{subject.id}} = AmCharts.makeChart( "chartdiv{{subject.id}}", {
-                                                          "type": "pie",
-                                                          "theme": "light",
-                                                          "allLabels": [{
-                                                            "text": "{{subdata.overall.0.avg}}",
-                                                            "size":36,
-                                                            "align": "center",
-                                                            "bold": true,
-                                                            "y": 78,
-                                                          }],
-                                                          "dataProvider": [ {
-                                                            "title": "Rating",
-                                                            "value": {{subdata.overall.0.avg}},
-                                                            "color":"#3CB371",
-                                                          }, {
-                                                            "title": "not rating",
-                                                            "value": {{subdata.overall.0.counter_avg}},
-                                                            "color":"#800000",
-                                                          } ],
-                                                          "titleField": "title",
-                                                          "valueField": "value",
-                                                          "labelRadius": 5,
-                                                          "colorField": "color",
-                                                          "radius": "42%",
-                                                          "innerRadius": "60%",
-                                                          "labelText": "[[title]]",
-                                                        } );
-                                                        </script>
-
-                                            
-                                                        <div id="chartdiv{{subject.id}}"></div>
-                                                
+                                                <table class="centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="font-size: 30px; color: red;">Weaknesses</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for tag in subdata.weakness %}
+                                                        <tr>
+                                                            <td style="font-size: 20px;" >{{tag}}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                         
                                     </div>
 
-                                    <h4>Subject Wise Evaluation</h4>
+                                    <h4>Question Wise Evaluation</h4>
 
                                     <div class="row">
                                         {% for question,qdata in subdata.responses.items %}
@@ -402,7 +408,7 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    
                 </div>
                 {% endfor %}
             </div>
