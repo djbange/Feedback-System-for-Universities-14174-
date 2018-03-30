@@ -56,7 +56,7 @@ def get_tags(sentence):
 						tags_in_sentence.append(key.id)
 	print("Tags in the sentence are",tags_in_sentence)
 	if len(tags_in_sentence) == 0:
-		return 5
+		return -1
 	else:
 		return tags_in_sentence[0]
 	#get_sentiment(sentence)

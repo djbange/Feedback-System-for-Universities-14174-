@@ -514,18 +514,21 @@ def login(request):
 			username=form.cleaned_data['username']
 			password=form.cleaned_data['password']
 			user = authenticate(username=username, password=password)
-			user_login(request, user)
-			role=authenticate_role(user)
+			if user is not None:
+				user_login(request, user)
+				role=authenticate_role(user)
 
-			if(role == 'STUDENT'):
-				return redirect('student_dashboard')
-			elif (role == 'FACULTY'):
-				return redirect('faculty_dashboard')
-			elif (role =='AUDITOR'):
-				return redirect('auditor_profile')
-			elif(role == 'COORDINATOR'):
-				return redirect('coordinator_dashboard')
+				if(role == 'STUDENT'):
+					return redirect('student_dashboard')
+				elif (role == 'FACULTY'):
+					return redirect('faculty_dashboard')
+				elif (role =='AUDITOR'):
+					return redirect('auditor_profile')
+				elif(role == 'COORDINATOR'):
+					return redirect('coordinator_dashboard')
 
+			else:
+				messages.error(request, 'Username or Password Incorrect')
 
 	else:
 		form=LogInForm()

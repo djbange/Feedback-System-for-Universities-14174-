@@ -3,12 +3,14 @@
 
 {% block content %}
 
-<div class="row container center" >
-<div class="col s12 m6 ">
-  <div class="card blue lighten-1 ">
-    <div class="card-content white-text ">
-      <span class="card-title">Student Information</span>
-      <p>Name<br>{{ user.student.profile.name }}</p>
+<div class="maincard container row">
+        <div class="card">
+            <div class="maincard_header">
+                <h4>Student Profile</h4>
+            </div>
+            <div class="card-content">
+                
+                    <p>Name<br>{{ user.student.profile.name }}</p>
       <br><br>
 
       <p>Email<br>
@@ -22,6 +24,9 @@
       <br><br>
       <p>Department <br>
       {{ user.student.classroom.department.name }}</p>
+                
+            </div>
+      
       
     </div>
   </div>
