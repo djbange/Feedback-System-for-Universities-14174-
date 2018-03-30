@@ -15,10 +15,21 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from .final_new import get_sentiment, get_tags
+from .final_new import get_sentiment, get_tags, get_sentiments
 
 from django.db.models import Count,Sum,Avg,IntegerField,Case,When
 from django.shortcuts import render_to_response
+
+#sentiment
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+analyzer = SentimentIntensityAnalyzer()
+
+def get_sentiment(sentence):
+	vs = analyzer.polarity_scores(sentence)
+	vs.pop('compound')
+	type = max(vs.items(),key=lambda x:x[1])[0]
+	print("Sentiment is",type)
+	return type
 
 
 ACADEMICS = QuestionType.objects.get(title='Academics')
@@ -115,6 +126,16 @@ def faculty_dashboard(request):
 						scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
 				
 				context[form][teacher_subject.subject]['responses'][question]['scores'] = scores
+		responses = TextualResponse.objects.filter(feedback_form=form)
+		sentiments = {}
+		for response in responses:
+			sentiments[response] = get_sentiments(response.answer)
+		print("Akshay sentiments:", sentiments)
+		# context = {
+		# "positive":pos,
+		# "negative":neg,
+		# }
+
 
 	#print(context)
 
@@ -141,17 +162,56 @@ def auditor_dashboard(request):
 		types_overall_rating=list(FeedbackResponse.objects.filter(question__feedback_form =form).values('question__type__title').annotate(avg =Avg('answer')))
 		for type_ in types_overall_rating:
 			type_['avg']=round(((type_['avg']/5)*100),2)
+			if type_['avg'] > 75:
+				type_['color'] = 'green'
+			elif type_['avg'] > 60:
+				type_['color'] = 'orange'
+			else:
+				type_['color'] = 'red'
 		context[form]['types_overall_rating'] =types_overall_rating
-		
 	
-	
-	print(context)
+	context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
+	context[form]['score'] = []
+	context[form]['columns'] = ["Name", "Dept"]
+	context[form]['columns'].extend([t.tag.tag_title for t in context[form]['tags']])
+	context[form]['columns'].append("Overall")
+
+	for faculty in Faculty.objects.all():
+		cur_faculty = []
+		cur_faculty.append(faculty.profile.name)
+		cur_faculty.append(TeacherSubject.objects.get(teacher=faculty).classroom.department.name)
 		
+		tag_merge = {}
+		for resp in context[form]['tags']:
+				cur_resp = list(FeedbackResponse.objects.filter(question__feedback_form=form,
+												teacher_subject__teacher=faculty, question=resp)
+												.values("question__tag__tag_title")
+												.annotate(avgs=Avg('answer')))
+				if cur_resp[0]['question__tag__tag_title'] not in tag_merge:
+					tag_merge[cur_resp[0]['question__tag__tag_title']] = []
+				tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
+		
+		tag_score = {}
+		overall = 0
+		for k, v in tag_merge.items():
+			cur_avg = 0
+			for val in v:
+				cur_avg += val
+			cur_avg /= len(v)
+			tag_score[k] = round(cur_avg, 2)
+			overall += cur_avg
+		overall /= len(tag_score.keys())
+		overall = round(overall, 2)
 
-
-	return render_to_response('auditor_dashboard.html',locals())
+		for resp in context[form]['tags']:
+			cur_tag = resp.tag.tag_title 
+			cur_faculty.append(tag_score[cur_tag])
+		cur_faculty.append(overall)
+		context[form]['score'].append(cur_faculty)
 
 	'''
+	return render_to_response('auditor_dashboard.html',locals())
+
 	infrastructure_data =list(FeedbackResponse.objects.filter(question__type__title="Infrastructure").values('question').annotate(dsum=Sum('answer')))
 	academics_data = list(FeedbackResponse.objects.filter(question__type__title="Academics").values('question').annotate(dsum=Sum('answer')))
 	for data in infrastructure_data:
@@ -176,6 +236,25 @@ def auditor_dashboard(request):
 
 	
 	'''
+	return render_to_response('auditor_dashboard.html',locals())
+
+@auditor_required
+def ajax_data_table(request, formid=None, dept=None, minimum=None, maximum=None):
+	if formid:
+		if dept:
+			if minimum or maximum:
+				minimum = max(0,minimum)
+				maximum = min(5,maximum)
+				faculty_question_data = FeedbackResponse.objects.filter(question__feedback_form__id  = formid).values('teacher_subject__teacher','question__tag').annotate(avg = Avg('answer'))
+				print(faculty_question_data)
+				return JsonResponse({'x':'y'})
+			else:
+				return JsonResponse({'x':'y2'})
+		else:
+			return JsonResponse({'x':'y3'})
+	else:
+		return JsonResponse({'error':'no formid'})
+
 
 @coordinator_required
 def coordinator_dashboard(request):
@@ -321,9 +400,9 @@ def ajax_add_questions(request):
 	data = request.POST
 	q = Question(
 		text=data['text'],
-		tag=Tag.objects.get(pk=data['tagid']),
+		tag=Tag.objects.get(pk=int(data['tagid'])),
 		type=QuestionType.objects.get(title=data['type']),
-		feedback_form=FeedbackForm.objects.get(pk=data['form'])
+		feedback_form=FeedbackForm.objects.get(pk=int(data['form']))
 	)
 	q.save()
 	
@@ -334,11 +413,16 @@ def ajax_add_questions(request):
 def edit_form_question(request):
 	print(request.POST)
 	data = request.POST
+	tag_obj = None
+
+	if data['tagid'] != "":
+		tag_obj = Tag.objects.get(pk=int(data['tagid']))
+
 	q = Question(
 		text=data['text'],
-		tag=Tag.objects.get(pk=data['tagid']),
+		tag=tag_obj,
 		type=QuestionType.objects.get(title=data['type']),
-		feedback_form=FeedbackForm.objects.get(pk=data['formid'])
+		feedback_form=FeedbackForm.objects.get(pk=int(data['formid']))
 	)
 	q.save()
 	
@@ -537,7 +621,7 @@ def login(request):
 				elif (role == 'FACULTY'):
 					return redirect('faculty_dashboard')
 				elif (role =='AUDITOR'):
-					return redirect('auditor_profile')
+					return redirect('auditor_dashboard')
 				elif(role == 'COORDINATOR'):
 					return redirect('coordinator_dashboard')
 
@@ -559,7 +643,7 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
+            #messages.success(request, 'Your password was successfully updated!')
             role=authenticate_role(user)
 
             if(role == 'STUDENT'):
