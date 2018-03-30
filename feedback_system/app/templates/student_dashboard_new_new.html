@@ -13,7 +13,7 @@
                 <ul class="collection">
                     {% for form in feedbackforms %}
                     <li class="collection-item">
-                        <a href="{% url 'student_feedback' form.id %}" class="participate btn-flat">Participate</a>
+                        <a href="{% url 'student_feedback' form.id %}" class="participate btn">Participate</a>
                         <div class="form_name">
                             {{form.title}}
                             <span class="status form{{form.id}} badge lighten-3"></span>
@@ -37,13 +37,13 @@
                 console.log(response);
                 for (form in response){
                     if (response[form] === 'Not Attempted'){
-                        $('.'+form).addClass('red white-text');
+                        $('.'+form).addClass('red white-text darken-2');
                         $('.'+form).text('Not Attempted');
                     } else if (response[form] === 'Incomplete'){
-                        $('.'+form).addClass('orange');
+                        $('.'+form).addClass('orange white-text darken-2');
                         $('.'+form).text('Incomplete');
                     } else {
-                        $('.'+form).addClass('green');
+                        $('.'+form).addClass('green white-text darken-4');
                         $('.'+form).text('Complete');
                     }
                 }
