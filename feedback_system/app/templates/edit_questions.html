@@ -190,19 +190,25 @@
                         <option value="3">Infrastructure</option>
                     </select>
                 </div>
+                <div class="row">
                 <h5>Question content</h5>
-                <div class="input-field">
+                <div class="input-field col s7">
                     <textarea id="textarea1" class="materialize-textarea"></textarea>
                     <label for="textarea1">Write your question here</label>
                 </div>
                 <h5>Tag</h5>
-                <div id="Q2" class="input-field">
+                <div id="Q2" class="input-field col s5">
                     <select id="#selectt">
                         <option value="" disabled selected>Choose your option</option>
                         {% for tag in tags %}
                         <option value="{{tag.id}}">{{tag.tag_title}}</option>
                         {% endfor %}
                     </select>
+                </div>
+                </div>
+                <div class="row">
+                    <h5>Tag Predicted: </h5>
+                    <p class="tag-predicted"></p>
                 </div>
             </div>
         </div>
@@ -229,6 +235,26 @@
                 edge: 'left', // Choose the horizontal origin
                 closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
                 draggable: true // Choose whether you can drag to open on touch screens
+            });
+
+            $('select').material_select();
+
+            $('#textarea1').on('input',function(){
+                console.log('before',$('#selectt').val());
+                $.ajax({
+                    url:'ajax/predict_tags',
+                    method:'POST',
+                    data:{
+                        'text':$('#textarea1').val(),
+                        'csrfmiddlewaretoken':jQuery("[name=csrfmiddlewaretoken]").val(),
+                    },
+                    success:function(response){
+                        $('.tag-predicted').text(response.tag);
+                        console.log('tag',response.tag);
+
+                    }
+                })
+                console.log('after',$('#selectt').val());
             });
 
             $('.save_title').click(function(){
@@ -333,7 +359,6 @@
                 $(this).parent().parent().parent().collapsible('open',$(this).parent().parent().index()+1);
             });
 
-            $('select').material_select();
 
         });
 
