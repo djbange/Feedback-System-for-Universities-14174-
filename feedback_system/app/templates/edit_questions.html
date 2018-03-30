@@ -50,9 +50,7 @@
             background-color: #fff3e0;
         }
 
-        .card:hover {
-            background-color: #f6f6ff;
-        }
+        
 
         .fixed-action-btn {
             position: absolute;
@@ -96,126 +94,137 @@
 
 
     <div id="questions" class="container col s12">
-        <div class="row">
-            Title:
-            <div class="input-field inline">
-                <input value="{{form.title}}" type="text" class="form_title">
-            </div>
-            <a class="save_title waves-effect waves-light btn">Save</a>
-        </div>
-        <ul class="collapsible" data-collapsible="accordion">
-          <li>
-            <div class="collapsible-header">Academics</div>
-            <div class="collapsible-body">
-                <ul class="collapsible" data-collapsible="accordion">
-                {% for question in acadquestions %}
-                  <li>
-                    <div class="collapsible-header">
-                        {{question.text}}
-                    </div>
-                    <div class="collapsible-body">
-                        <div class="center-align row">
-                            <a data-answer="1" class="waves-effect waves-teal btn answer-btn-1 red collect_answer">Unsatisfactory</a>
-                            <a data-answer="2" class="waves-effect waves-teal btn answer-btn-2 amber collect_answer">Needs Improvement</a>
-                            <a data-answer="3" class="waves-effect waves-teal btn answer-btn-3 yellow collect_answer">Satisfactory</a>
-                            <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
-                            <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
+        <div class="card">
+            <div style="background-color: rgb(243, 241, 241); height: 150px;" class="card-content">
+                <div class="container center">
+                    <div >
+                        <div >
+                            <div class="input-field col s6 center">
+                                <input style="font-size: 30px;" value="{{form.title}}" id="first_name" type="text" class="form_title">
+                                <label style="font-size: 20px;" class="active" for="first_name">Title</label>
                             </div>
-                            <div id="question{{ question.id }}" class="center-align row">
-                                <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
-                            </div>
-                    </div>
-                  </li>
-                {% endfor %}
-                </ul>
-            </div>
-          </li>
-          <li>
-            <div class="collapsible-header">Infrastructure</div>
-            <div class="collapsible-body">
-                <ul class="collapsible" data-collapsible="accordion">
-                    {% for question in infraquestions %}
-                        <li>
-                        <div class="collapsible-header">{{question.text}}</div>
-                        <div class="collapsible-body">
-                        <div class="center-align row">
-                            <a data-answer="1" class="waves-effect waves-teal btn answer-btn-1 red collect_answer">Unsatisfactory</a>
-                            <a data-answer="2" class="waves-effect waves-teal btn answer-btn-2 amber collect_answer">Needs Improvement</a>
-                            <a data-answer="3" class="waves-effect waves-teal btn answer-btn-3 yellow collect_answer">Satisfactory</a>
-                            <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
-                            <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
-                        </div>                            
+                            <a class="save_title waves-effect waves-light btn">Save</a>
                         </div>
-                        <div id="question{{ question.id }}" class="center-align row">
-                            <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
-                        </div> 
-                        </li>
-                    {% endfor %}
-                </ul>
+                    </div>
+                </div>
             </div>
-          </li>
-          <li>
-            <div class="collapsible-header">Faculty</div>
-            <div class="collapsible-body">
+            <div class="card-action">
+                
                 <ul class="collapsible" data-collapsible="accordion">
-                    {% for question in facultyquestions %}
-                        <li>
-                        <div class="collapsible-header">{{question.text}}</div>
+                    <li>
+                        <div class="collapsible-header">Academics</div>
                         <div class="collapsible-body">
-                            <div class="center-align row">
-                                <a data-answer="1" class="waves-effect waves-teal btn answer-btn-1 red collect_answer">Unsatisfactory</a>
-                                <a data-answer="2" class="waves-effect waves-teal btn answer-btn-2 amber collect_answer">Needs Improvement</a>
-                                <a data-answer="3" class="waves-effect waves-teal btn answer-btn-3 yellow collect_answer">Satisfactory</a>
-                                <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
-                                <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
+                            <ul class="collapsible" data-collapsible="accordion">
+                                {% for question in acadquestions %}
+                                <li>
+                                    <div class="collapsible-header">
+                                        {{question.text}}
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <div class="center-align row">
+                                            <a data-answer="1" class="waves-effect waves-teal btn answer-btn-1 red collect_answer">Unsatisfactory</a>
+                                            <a data-answer="2" class="waves-effect waves-teal btn answer-btn-2 amber collect_answer">Needs Improvement</a>
+                                            <a data-answer="3" class="waves-effect waves-teal btn answer-btn-3 yellow collect_answer">Satisfactory</a>
+                                            <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
+                                            <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
+                                        </div>
+                                        <div id="question{{ question.id }}" class="center-align row">
+                                            <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Infrastructure</div>
+                        <div class="collapsible-body">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                {% for question in infraquestions %}
+                                <li>
+                                    <div class="collapsible-header">{{question.text}}</div>
+                                    <div class="collapsible-body">
+                                        <div class="center-align row">
+                                            <a data-answer="1" class="waves-effect waves-teal btn answer-btn-1 red collect_answer">Unsatisfactory</a>
+                                            <a data-answer="2" class="waves-effect waves-teal btn answer-btn-2 amber collect_answer">Needs Improvement</a>
+                                            <a data-answer="3" class="waves-effect waves-teal btn answer-btn-3 yellow collect_answer">Satisfactory</a>
+                                            <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
+                                            <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
+                                        </div>
+                                    </div>
+                                    <div id="question{{ question.id }}" class="center-align row">
+                                        <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Faculty</div>
+                        <div class="collapsible-body">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                {% for question in facultyquestions %}
+                                <li>
+                                    <div class="collapsible-header">{{question.text}}</div>
+                                    <div class="collapsible-body">
+                                        <div class="center-align row">
+                                            <a data-answer="1" class="waves-effect waves-teal btn answer-btn-1 red collect_answer">Unsatisfactory</a>
+                                            <a data-answer="2" class="waves-effect waves-teal btn answer-btn-2 amber collect_answer">Needs Improvement</a>
+                                            <a data-answer="3" class="waves-effect waves-teal btn answer-btn-3 yellow collect_answer">Satisfactory</a>
+                                            <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
+                                            <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
+                                        </div>
+                                        <div id="question{{ question.id }}" class="center-align row">
+                                            <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <div class="card new_question_card">
+                    <div class="card-content">
+                        <h5>Select Question Type</h5>
+                        <div id="Q1" class="input-field col s12">
+                            <select id="#selectq">
+                                <option value="" disabled selected>Choose your option</option>
+                                <option value="1">Academics</option>
+                                <option value="2">Faculty</option>
+                                <option value="3">Infrastructure</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <h5>Question content</h5>
+                            <div class="input-field col s7">
+                                <textarea id="textarea1" class="materialize-textarea"></textarea>
+                                <label for="textarea1">Write your question here</label>
                             </div>
-                            <div id="question{{ question.id }}" class="center-align row">
-                                <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
+                            <h5>Tag</h5>
+                            <div id="Q2" class="input-field col s5">
+                                <select id="#selectt">
+                                    <option value="" disabled selected>Choose your option</option>
+                                    {% for tag in tags %}
+                                    <option value="{{tag.id}}">{{tag.tag_title}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-          </li>
-        </ul>
-        <div class="card new_question_card">
-            <div class="card-content">
-                <h5>Select Question Type</h5>
-                <div id="Q1" class="input-field col s12">
-                    <select id="#selectq">
-                        <option value="" disabled selected>Choose your option</option>
-                        <option value="1">Academics</option>
-                        <option value="2">Faculty</option>
-                        <option value="3">Infrastructure</option>
-                    </select>
+                        <div class="row">
+                            <h5>Tag Predicted: </h5>
+                            <p class="tag-predicted"></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                <h5>Question content</h5>
-                <div class="input-field col s7">
-                    <textarea id="textarea1" class="materialize-textarea"></textarea>
-                    <label for="textarea1">Write your question here</label>
-                </div>
-                <h5>Tag</h5>
-                <div id="Q2" class="input-field col s5">
-                    <select id="#selectt">
-                        <option value="" disabled selected>Choose your option</option>
-                        {% for tag in tags %}
-                        <option value="{{tag.id}}">{{tag.tag_title}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                </div>
-                <div class="row">
-                    <h5>Tag Predicted: </h5>
-                    <p class="tag-predicted"></p>
+                
+                <div class="center-align">
+                    <a href="{% url 'edit_form' form.id %}" class="waves-effect waves-light btn save_and_continue">Save and Add Another</a>
+                    <a href="{% url 'coordinator_dashboard' %}" class="waves-effect waves-light btn green">Finish</a>
                 </div>
             </div>
-        </div>
-
-        <div class="center-align">
-            <a href="{% url 'edit_form' form.id %}" class="waves-effect waves-light btn save_and_continue">Save and Add Another</a>
-            <a href="{% url 'coordinator_dashboard' %}" class="waves-effect waves-light btn green">Finish</a>
         </div>
         
     </div>
