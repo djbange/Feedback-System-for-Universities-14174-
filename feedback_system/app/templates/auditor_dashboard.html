@@ -1,10 +1,12 @@
 <html>
-
+{% load staticfiles %}
 <head>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'app/datatables-buttons.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auditor Dashboard</title>
 
@@ -94,7 +96,6 @@
         .sidenav {padding-top: 15px;}
         .sidenav a {font-size: 18px;}
         }
-
     </style>
 </head>
 
@@ -170,6 +171,7 @@
     </div>
 </div>
 
+{% for form,data in context.items %}
 <div>
     <div class="maincard container row">
         <div class="card">
@@ -205,19 +207,12 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                    {% for overall in data.types_overall_rating %}
                                                         <tr>
-                                                            <td style="font-size: 20px;">Academics</td>
-                                                            <td style="font-size: 20px; color: rgb(151, 250, 151);">67%</td>
+                                                            <td style="font-size: 20px;">{{overall.question__type__title}}</td>
+                                                            <td style="font-size: 20px; color: {{overall.color}};">{{overall.avg}}%</td>                                                            
                                                         </tr>
-                                                        <tr>
-                                                            <td style="font-size: 20px;">Infrastructure</td>
-                                                            <td style="font-size: 20px; color: rgb(255, 105, 105);">45%</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-size: 20px;">Faculty</td>
-                                                            <td style="font-size: 20px; color: rgb(15, 253, 15);">80%</td>
-                    
-                                                        </tr>
+                                                    {% endfor %}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -245,14 +240,10 @@
                                             <div class="col s3">
                                                 <h3>Teachers</h3>
                                             </div>
-                                            <div style="margin-top: 45px;" class="col s9">
-                                                <a href="#!" class="secondary-content btn-large btn-flat">
-                                                    EXPORT
-                                                    <i class="material-icons right">open_in_new</i>
-                                                </a>
-                                            </div>
+                                            
                                         </div>
                                     </div>
+                                    <!--
                                     <div class="row">
                                         <div class="col s3">
                                             <div class="input-field">
@@ -283,76 +274,53 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="teachersTable">
-                                        <table id="table_id">
-                                            <thead>
-                                                <tr>
-                                                    <th>Names</th>
-                                                    <th>Punctuality</th>
-                                                    <th>Motivation</th>
-                                                    <th>Cleanliness</th>
-                                                    <th>Comtempary</th>
-                                                    <th>Mess/Canteen</th>
-                                                    <th>Overall</th>
-                                                </tr>
-                                            </thead>
-                    
-                                            <tbody>
-                                                <tr>
-                    
-                                                    <td>Faculty 1</td>
-                                                    <th>73%</th>
-                                                    <th>58%</th>
-                                                    <th>42%</th>
-                                                    <th>64%</th>
-                                                    <th>43%</th>
-                                                    <th>53%</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Faculty 2</td>
-                                                    <th>73%</th>
-                                                    <th>58%</th>
-                                                    <th>42%</th>
-                                                    <th>64%</th>
-                                                    <th>43%</th>
-                                                    <th>53%</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Faculty 3</td>
-                                                    <th>73%</th>
-                                                    <th>58%</th>
-                                                    <th>42%</th>
-                                                    <th>64%</th>
-                                                    <th>43%</th>
-                                                    <th>53%</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Faculty 3</td>
-                                                    <th>73%</th>
-                                                    <th>58%</th>
-                                                    <th>42%</th>
-                                                    <th>64%</th>
-                                                    <th>43%</th>
-                                                    <th>53%</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Faculty 3</td>
-                                                    <th>73%</th>
-                                                    <th>58%</th>
-                                                    <th>42%</th>
-                                                    <th>64%</th>
-                                                    <th>43%</th>
-                                                    <th>53%</th>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    -->
+                                    <div class="card">
+                                        <div style="background-color: rgb(216, 215, 215); height: 100px;" class="card-content">
+                                            <div class="row">
+                                                <div class="col s9">
+                                                    <p style="font-size: 30px;" >Teachers</p>
+                                                </div>
+                                                <div class="col s3">
+                                                    <a href="#!" class="secondary-content btn-large btn">
+                                                        Export to PDF
+                                                        <i class="material-icons right">open_in_new</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-action">
+                                                <div class="teachersTable">
+                                                        <table class="striped bordered highlight responsive-table" id="table_id">
+                                                            <thead>
+                                                                <tr>
+                
+                                                                    {% for cols in data.columns %}
+                                                                    <th>{{cols}}</th>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                            </thead>
+                                    
+                                                            <tbody>
+                                                                {% for faculty in data.score %}
+                                                                    <tr>
+                                                                        {% for score in faculty %}
+                                                                        <td>{{score}}</td>
+                                                                        {% endfor %}
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                    
+                            
+
+
                             <div id="allquestions" class="section scrollspy">
-                    
-                    
+                                
                             </div>
                         </div>
                         
@@ -363,6 +331,7 @@
     </div>
 
 </div>
+{% endfor %}
 
 <div>
     <ul class="section table-of-contents pinned">
@@ -382,7 +351,14 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
-    <script src="materialize-stepper.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -403,6 +379,14 @@
                 collapsed = !collapsed;
 
             });
+
+            $('#table_id').dataTable({
+                'processing':true,
+                dom: 'Bfrtip',
+                
+            });
+
+            $('.dt-button').css("background-color", "red");
 
             function doExpanded() {
                 $('#mySidenav').css('width', '250px');

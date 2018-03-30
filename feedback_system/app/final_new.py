@@ -8,12 +8,13 @@ sudo pip install -e word_forms
 """GAIKWAD's ALGORITM TO PREDICT TAGS AND PERFORM SENTIMENT ANALYSIS ON A GIVEN SENTENCE"""
 
 from word_forms.word_forms import get_word_forms
-from nltk.corpus import wordnet as wn
+#from nltk.corpus import wordnet as wn
 from itertools import chain
 
 #this part of the code will run as soon as server starts 
 #add db query to find out all tags and convert it in a list 
 from app.models import Tag
+'''
 tags = list(Tag.objects.all())
 # tags = []
 # for i in range(len(tags_all)):
@@ -42,7 +43,7 @@ from pprint import pprint as pp
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 stop = set(stopwords.words('english'))
-
+'''
 def get_tags(sentence):
 	optimised_sentence =  [i for i in sentence.lower().split() if i not in stop]
 	print(optimised_sentence)
@@ -60,7 +61,7 @@ def get_tags(sentence):
 	else:
 		return tags_in_sentence[0]
 	#get_sentiment(sentence)
-
+'''
 #sentiment analysis part using VaderSentiment
 """
 
@@ -73,7 +74,7 @@ if you already have upgrade using "pip install --upgrade vaderSentiment"
 """
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 analyzer = SentimentIntensityAnalyzer()
-
+'''
 def get_sentiment(sentence):
 	vs = analyzer.polarity_scores(sentence)
 	vs.pop('compound')
@@ -107,4 +108,4 @@ print(optimised_tags)
 while(1):
 	sentence = input("Enter sentence:")
 	get_tags(sentence)
-	'''
+'''

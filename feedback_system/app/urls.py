@@ -14,6 +14,7 @@ urlpatterns = [
 	path('faculty_profile/', views.faculty_profile, name='faculty_profile'),
 	path('auditor_profile/', views.auditor_profile, name='auditor_profile'),
 	path('auditor_dashboard/', views.auditor_dashboard, name='auditor_dashboard'),
+	path('auditor_dashboard/ajax', views.ajax_data_table, name='ajax_data_table'),
 	path('coordinator_profile/', views.coordinator_profile, name='coordinator_profile'),
 	path('coordinator_dashboard/', views.coordinator_dashboard, name='coordinator_dashboard'),
 	path('publish_form/<int:formid>', views.publish_form, name='publish_form'),
@@ -37,7 +38,6 @@ urlpatterns = [
 	path('edit_form/<int:formid>/ajax/predict_tags', views.ajax_predict_tags, name='ajax_predict_tags'),
 
 	path('edit_form/ajax/predict_tags', views.ajax_predict_tags, name='ajax_predict_tags'),
-
 
 	path('student_feedback/<int:formid>/ajax/textual', views.ajax_text_response, name='ajax_text_response'),
 	path('feedback_faculty/<int:formid>', views.feedback_faculty, name='feedback_faculty'),

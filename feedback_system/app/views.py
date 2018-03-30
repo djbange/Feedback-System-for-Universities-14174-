@@ -127,17 +127,56 @@ def auditor_dashboard(request):
 		types_overall_rating=list(FeedbackResponse.objects.filter(question__feedback_form =form).values('question__type__title').annotate(avg =Avg('answer')))
 		for type_ in types_overall_rating:
 			type_['avg']=round(((type_['avg']/5)*100),2)
+			if type_['avg'] > 75:
+				type_['color'] = 'green'
+			elif type_['avg'] > 60:
+				type_['color'] = 'orange'
+			else:
+				type_['color'] = 'red'
 		context[form]['types_overall_rating'] =types_overall_rating
-		
 	
-	
-	print(context)
+	context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
+	context[form]['score'] = []
+	context[form]['columns'] = ["Name", "Dept"]
+	context[form]['columns'].extend([t.tag.tag_title for t in context[form]['tags']])
+	context[form]['columns'].append("Overall")
+
+	for faculty in Faculty.objects.all():
+		cur_faculty = []
+		cur_faculty.append(faculty.profile.name)
+		cur_faculty.append(TeacherSubject.objects.get(teacher=faculty).classroom.department.name)
 		
+		tag_merge = {}
+		for resp in context[form]['tags']:
+				cur_resp = list(FeedbackResponse.objects.filter(question__feedback_form=form,
+												teacher_subject__teacher=faculty, question=resp)
+												.values("question__tag__tag_title")
+												.annotate(avgs=Avg('answer')))
+				if cur_resp[0]['question__tag__tag_title'] not in tag_merge:
+					tag_merge[cur_resp[0]['question__tag__tag_title']] = []
+				tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
+		
+		tag_score = {}
+		overall = 0
+		for k, v in tag_merge.items():
+			cur_avg = 0
+			for val in v:
+				cur_avg += val
+			cur_avg /= len(v)
+			tag_score[k] = round(cur_avg, 2)
+			overall += cur_avg
+		overall /= len(tag_score.keys())
+		overall = round(overall, 2)
 
-
-	return render_to_response('auditor_dashboard.html',locals())
+		for resp in context[form]['tags']:
+			cur_tag = resp.tag.tag_title 
+			cur_faculty.append(tag_score[cur_tag])
+		cur_faculty.append(overall)
+		context[form]['score'].append(cur_faculty)
 
 	'''
+	return render_to_response('auditor_dashboard.html',locals())
+
 	infrastructure_data =list(FeedbackResponse.objects.filter(question__type__title="Infrastructure").values('question').annotate(dsum=Sum('answer')))
 	academics_data = list(FeedbackResponse.objects.filter(question__type__title="Academics").values('question').annotate(dsum=Sum('answer')))
 	for data in infrastructure_data:
@@ -162,6 +201,25 @@ def auditor_dashboard(request):
 
 	
 	'''
+	return render_to_response('auditor_dashboard.html',locals())
+
+@auditor_required
+def ajax_data_table(request, formid=None, dept=None, minimum=None, maximum=None):
+	if formid:
+		if dept:
+			if minimum or maximum:
+				minimum = max(0,minimum)
+				maximum = min(5,maximum)
+				faculty_question_data = FeedbackResponse.objects.filter(question__feedback_form__id  = formid).values('teacher_subject__teacher','question__tag').annotate(avg = Avg('answer'))
+				print(faculty_question_data)
+				return JsonResponse({'x':'y'})
+			else:
+				return JsonResponse({'x':'y2'})
+		else:
+			return JsonResponse({'x':'y3'})
+	else:
+		return JsonResponse({'error':'no formid'})
+
 
 @coordinator_required
 def coordinator_dashboard(request):
