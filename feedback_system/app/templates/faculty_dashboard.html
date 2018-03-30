@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Page Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    
+    <style>
+        html{
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+        .side-nav{
+            margin-top: 75px;
+            width: 20%;
+        }
+        .brand-logo{
+            margin-left: 10px;
+        }
+        .profile{
+            margin-top: 10px;
+            color:#ffffff;
+        }
+        .tabs{
+            margin-top: 41px;
+            color: #1a237e;
+        }
+        .tab{
+            color: #1a237e;
+        }
+        .profile:hover{
+            background-color: #e65100;
+        }
+
+        #form1, #form2{
+            margin-left: 20%;
+            margin-top: -30px;
+        }
+        .positive{
+            background-color: rgb(201, 255, 201);
+            border-radius: 10px;
+        }
+        .positive-chip{
+            background-color: rgb(88, 185, 88);
+            font-size: 20px;
+        }
+        .negative{
+            background-color: rgb(255, 201, 201);
+            border-radius: 10px;
+        }
+        .negative-chip{
+            background-color: rgb(185, 88, 88);
+            font-size: 20px;
+        }
+        .card-title{
+            font-size: 20px;
+        }
+        .numberCircle {
+            border-radius: 50%;
+            behavior: url(PIE.htc);
+            width: 36px;
+            height: 36px;
+            padding: 8px;
+            background: #fff;
+            border: 2px solid #666;
+            color: #666;
+            text-align: center;
+            font: 32px Arial, sans-serif;
+          }
+        nav{
+            min-height: 75px;
+            background-color: #1a237e;
+        }
+        #chart1div {
+            width		: 75%;
+            height		: 225px;
+            font-size	: 11px;
+        }
+
+        #chart2div {
+            width: 70%;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Resources -->
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper">
+                <a href="{%  url 'faculty_dashboard'%} " class="brand-logo">Faculty Dashboard</a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+        
+                        <a class="profile dropdown-trigger waves-effect waves-light btn-flat" data-target='dropdown1'>
+                            <i class="material-icons left">person</i>
+                            <strong>Hello, {{user.faculty.profile.name}}</strong>
+                        </a>
+        
+        
+                    </li>
+        
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    
+    
+    <div class="side-nav fixed">
+        <div class="container">
+            <h4>Evaluations</h4>
+        </div>
+        <div>
+            <table id="table_id" class="centereddisplay">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Your forms</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for form in forms %}
+                    <tr>
+                        <a href="#form{{form.id}}">
+                            <td>25-03-2018</td>
+                            <td>{{form.title}}</td>
+                            {% if form.is_active %}
+                            <td>Open</td>
+                            {% else %}
+                            <td>Closed</td>
+                            {% endif %}
+                        </a>
+                    </tr>
+                    {%  endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+    
+    {% for form,data in context.items %}
+    <div id="form{{form.id}}">
+            <div class="row">
+                <div class="col s12">
+                    <ul class="tabs">
+                        {% for subject,data1 in data.items %}
+                        <li class="tab col s3">
+                            <a href="#subject{{subject.id}}">{{subject.name}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% for subject,subdata in data.items %}
+                <div id="subject{{subject.id}}" class="col s12">
+                    <div class="row">
+                        <div class="row">
+                            <div class="col s12 m9 l10">
+                                <div id="subject_wise" class="section scrollspy">
+                                    <div class="row">
+                                        <div class="col s4">
+                                            <div class="card-panel ">
+                                                
+                                                <table class="centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="font-size: 30px; color: green;">Strengths</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for tag in subdata.strength %}
+                                                        <tr>
+                                                            <td style="font-size: 20px;" >{{tag}}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                        </div>
+                                    </div>
+                                    <div class="col s4">
+                                        <div class="card-panel ">
+                                            
+                                            <table class="centered">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="font-size: 30px; color: red;">Weaknesses</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for tag in subdata.weakness %}
+                                                    <tr>
+                                                        <td style="font-size: 20px;" >{{tag}}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                                <div class="col s4 ">
+                                            <div class="card-panel">
+                                                
+                                                    <span class="card-title">Overall</span>
+                                                    <style> #chartdiv{{subject.id}} {
+                                                        width		: 100%;
+                                                        height		: 200px;
+                                                        font-size	: 11px;
+                                                         }
+                                                    </style>
+                                                    <script>
+                                                        var chart{{subject.id}} = AmCharts.makeChart( "chartdiv{{subject.id}}", {
+                                                          "type": "pie",
+                                                          "theme": "light",
+                                                          "allLabels": [{
+                                                            "text": "{{subdata.overall.0.avg}}",
+                                                            "size":36,
+                                                            "align": "center",
+                                                            "bold": true,
+                                                            "y": 78,
+                                                          }],
+                                                          "dataProvider": [ {
+                                                            "title": "Rating",
+                                                            "value": {{subdata.overall.0.avg}},
+                                                            "color":"#3CB371",
+                                                          }, {
+                                                            "title": "not rating",
+                                                            "value": {{subdata.overall.0.counter_avg}},
+                                                            "color":"#800000",
+                                                          } ],
+                                                          "titleField": "title",
+                                                          "valueField": "value",
+                                                          "labelRadius": 5,
+                                                          "colorField": "color",
+                                                          "radius": "42%",
+                                                          "innerRadius": "60%",
+                                                          "labelText": "[[title]]",
+                                                        } );
+                                                        </script>
+
+                                            
+                                                        <div id="chartdiv{{subject.id}}"></div>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+
+                                    <h4>Subject Wise Evaluation</h4>
+
+                                    <div class="row">
+                                        {% for question,qdata in subdata.responses.items %}
+                                        <div class="col s6">
+                                            <div class="card-panel">
+                                                <span class="card-title">{{question.text}}</span>
+                                                <!-- Styles -->
+                                            <style>
+                                                #chartdivquestion{{question.id}} {
+                                                    width		: 100%;
+                                                    height		: 200px;
+                                                    font-size	: 11px;
+                                                }				
+                                            </style>
+        
+        
+        
+        <!-- Chart code -->
+        <script>
+                var chart1{{subject.id}} = AmCharts.makeChart("overall{{subject.id}}", {
+                    "type": "pie",
+                    "theme": "light",
+                    "dataProvider": [{
+                        "title": "Rating",
+                        "value": {{subdata.overall.0.avg}},
+                    },
+                    {
+                        "title": " not Rating",
+                        "value": 2,
+                    }],
+                    "titleField": "title",
+                    "valueField": "value",
+                    "labelRadius": 5,
+                    "text": 30,
+                    "radius": "42%",
+                    "innerRadius": "70%",
+                    "labelText": "[[title]]",
+                    
+                });
+
+        console.log({{qdata.scores}});
+
+        var chart{{question.id}} = AmCharts.makeChart("chartdivquestion{{question.id}}", {
+            "type": "serial",
+            "theme": "light",
+            "legend": {
+                "horizontalGap": 10,
+                "maxColumns": 1,
+                "position": "right",
+                "useGraphSettings": true,
+                "markerSize": 10
+            },
+            "dataProvider": [
+            {
+                "answer": "Response",
+                {% for score,count in qdata.scores.items %}
+                "{{score}}":{{count}},
+                {% endfor %} 
+            },
+            
+            ],
+            "graphs": [
+            {% for score,count in qdata.scores.items %}
+            {
+                "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                "fillAlphas": 0.8,
+                "labelText": "[[value]]",
+                "lineAlpha": 0.3,
+                "title": {{score}},
+                "type": "column",
+		        "color": "#000000",
+                "valueField": "{{score}}"
+            },
+            {% endfor %} 
+            ],
+            "rotate": true,
+            "categoryField": "answer",
+            "categoryAxis": {
+                "gridPosition": "start",
+                "axisAlpha": 0,
+                "gridAlpha": 0,
+                "position": "left"
+            },
+        });
+        </script>
+        
+        <!-- HTML -->
+                                                <div id="chartdivquestion{{question.id}}"></div>
+                                                
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                        
+                                </div>
+                        
+                                <div id="tag_wise" class="section scrollspy">
+                                    <h4>Tag Wise Evaluation</h4>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="positive col s5 flow-text">
+                                                <div class="positive-chip chip">Punctuality</div>
+                                                <br>This teacher is punctual, can clear our doubts and personal guidance is at its best.
+                                            </div>
+                                            <div class="negative col s5 push-s1 flow-text">
+                                                <div class="negative-chip chip">Motivation</div>
+                                                <br>This Teacher does not encourage different answers, demotivates us, and makes fun of us.
+                                            </div>
+                                        
+                                        </div>
+                                        <div class="row">
+                                            <div class="positive col s5 flow-text">
+                                                <div class="positive-chip chip">Interesting</div>
+                                                <br>Try's hard to make subject interesting, organises activites to grab attention.
+                                            </div>
+                                            <div class="negative col s5 push-s1 flow-text">
+                                                <div class="negative-chip chip">Compentancy</div>
+                                                <div class="negative-chip chip">Core Knowledge</div>
+                                                <br>This teacher cannot teach, no core knowledge and competency.
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                        
+                                <div id="overall" class="section scrollspy">
+                                    
+                                </div>
+                            </div>
+                            <div class="col hide-on-small-only m3 l2">
+                                <ul class="section table-of-contents pinned">
+                                    <li>
+                                        <a href="#subject_wise">Subject Wise Evaluation</a>
+                                    </li>
+                                    <li>
+                                        <a href="#tag_wise">Tag Wise Evaluation</a>
+                                    </li>
+                                    <li>
+                                        <a href="#overall">Overall Evaluation</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        
+    </div>
+    {% endfor %}
+
+    <div id="form2">
+        
+    </div>
+
+    <div id="form3">
+        <div class="container">
+            
+        </div>
+    </div>
+
+   
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script>
+        $(document).ready(function () {
+             $('.button-collapse').sideNav({
+                menuWidth: 300, // Default is 300
+                edge: 'left', // Choose the horizontal origin
+                closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                draggable: true // Choose whether you can drag to open on touch screens
+            });  
+            $('ul.tabs').tabs();
+            $('.scrollspy').scrollSpy();
+
+            $('#table_id').DataTable({
+                paging: false,
+                searching: false,
+
+            });
+        });
+    </script>
+</body> 
+</html>
