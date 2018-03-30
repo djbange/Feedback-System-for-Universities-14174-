@@ -80,64 +80,67 @@ def faculty_dashboard(request):
 	forms = list(FeedbackForm.objects.filter(is_published=True))
 	teacher_subjects = list(TeacherSubject.objects.filter(teacher=request.user.faculty))
 	for form in forms:
-		context[form] = {}
-		for teacher_subject in teacher_subjects:
-			context[form][teacher_subject.subject] = {}
-			context[form][teacher_subject.subject]['overall'] = {}
-			avg = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form).values('teacher_subject').annotate(avg =Avg('answer')))
-			for data in avg:
-				temp =None
-				for key,value in data.items():
-					if(key == 'avg'):
-						temp =value
-				data['avg'] = round(temp,2)
-				data['counter_avg'] = 5-round(temp, 2)
-			context[form][teacher_subject.subject]['overall'] = {}
-			context[form][teacher_subject.subject]['overall']['avg'] = avg
-			context[form][teacher_subject.subject]['overall']['scores'] = {6:{'val':0,'perc':100}}
-			maxv = 0
-			for i in range(1, 6):
-				context[form][teacher_subject.subject]['overall']['scores'][i] = {}
-				context[form][teacher_subject.subject]['overall']['scores'][i]['val'] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject, question__feedback_form=form, answer=i).count()
-				if maxv < context[form][teacher_subject.subject]['overall']['scores'][i]['val']:
-					maxv = context[form][teacher_subject.subject]['overall']['scores'][i]['val']
-				context[form][teacher_subject.subject]['overall']['scores'][6]['val'] += context[form][teacher_subject.subject]['overall']['scores'][i]['val']
-				
-			for i in range(1, 6):
-				context[form][teacher_subject.subject]['overall']['scores'][i]['perc'] = int((context[form][teacher_subject.subject]['overall']['scores'][i]['val']/maxv)*100)
+		if list(FeedbackResponse.objects.filter(question__feedback_form=form)):
+			context[form] = {}
+			for teacher_subject in teacher_subjects:
+				context[form][teacher_subject.subject] = {}
+				context[form][teacher_subject.subject]['overall'] = {}
+				avg = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form).values('teacher_subject').annotate(avg =Avg('answer')))
+				for data in avg:
+					temp =None
+					for key,value in data.items():
+						if(key == 'avg'):
+							temp =value
+					data['avg'] = round(temp,2)
+					data['counter_avg'] = 5-round(temp, 2)
+				context[form][teacher_subject.subject]['overall'] = {}
+				context[form][teacher_subject.subject]['overall']['avg'] = avg
+				context[form][teacher_subject.subject]['overall']['scores'] = {6:{'val':0,'perc':100}}
+				maxv = 0
+				for i in range(1, 6):
+					context[form][teacher_subject.subject]['overall']['scores'][i] = {}
+					context[form][teacher_subject.subject]['overall']['scores'][i]['val'] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject, question__feedback_form=form, answer=i).count()
+					if maxv < context[form][teacher_subject.subject]['overall']['scores'][i]['val']:
+						maxv = context[form][teacher_subject.subject]['overall']['scores'][i]['val']
+					context[form][teacher_subject.subject]['overall']['scores'][6]['val'] += context[form][teacher_subject.subject]['overall']['scores'][i]['val']
+				if maxv:	
+					for i in range(1, 6):
+						context[form][teacher_subject.subject]['overall']['scores'][i]['perc'] = int((context[form][teacher_subject.subject]['overall']['scores'][i]['val']/maxv)*100)
+				else:
+					context[form][teacher_subject.subject]['overall']['scores'][i]['perc'] =0
 
-			context[form][teacher_subject.subject]['responses'] = {}
-			context[form][teacher_subject.subject]['strength']=set()
-			context[form][teacher_subject.subject]['weakness']=set()
-			responses = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form))
+				context[form][teacher_subject.subject]['responses'] = {}
+				context[form][teacher_subject.subject]['strength']=set()
+				context[form][teacher_subject.subject]['weakness']=set()
+				responses = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form))
+				for response in responses:
+					question = response.question
+					#print(question.tag.tag_title)
+					context[form][teacher_subject.subject]['responses'][question] = {}
+					temp = list(FeedbackResponse.objects.filter(question=question).values('question').annotate(avg =Avg('answer')))
+					context[form][teacher_subject.subject]['responses'][question]['overall'] = temp[0]['avg']
+					for data in temp:
+						if(float(data['avg']) > 3.5):#not working
+							context[form][teacher_subject.subject]['strength'].add(question.tag)
+						else:
+							context[form][teacher_subject.subject]['weakness'].add(question.tag)
+					scores= {}
+					for i in range(1,6):
+							scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
+					
+					context[form][teacher_subject.subject]['responses'][question]['scores'] = scores
+			responses = TextualResponse.objects.filter(feedback_form=form)
+			sentiments = {}
 			for response in responses:
-				question = response.question
-				#print(question.tag.tag_title)
-				context[form][teacher_subject.subject]['responses'][question] = {}
-				temp = list(FeedbackResponse.objects.filter(question=question).values('question').annotate(avg =Avg('answer')))
-				context[form][teacher_subject.subject]['responses'][question]['overall'] = temp[0]['avg']
-				for data in temp:
-					if(float(data['avg']) > 3.5):#not working
-						context[form][teacher_subject.subject]['strength'].add(question.tag)
-					else:
-						context[form][teacher_subject.subject]['weakness'].add(question.tag)
-				scores= {}
-				for i in range(1,6):
-						scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
-				
-				context[form][teacher_subject.subject]['responses'][question]['scores'] = scores
-		responses = TextualResponse.objects.filter(feedback_form=form)
-		sentiments = {}
-		for response in responses:
-			sentiments[response] = get_sentiments(response.answer)
-		print("Akshay sentiments:", sentiments)
-		# context = {
-		# "positive":pos,
-		# "negative":neg,
-		# }
+				sentiments[response] = get_sentiments(response.answer)
+			print("Akshay sentiments:", sentiments)
+			# context = {
+			# "positive":pos,
+			# "negative":neg,
+			# }
 
 
-	#print(context)
+		#print(context)
 
 	return render_to_response( 'faculty_dashboard.html',locals())
 
@@ -150,92 +153,85 @@ def faculty_profile(request):
 def auditor_profile(request):
 	return render(request, 'auditor_profile.html')
 
-
+@auditor_required
 def auditor_dashboard(request):
 
 	context = {}
 	forms   = list(FeedbackForm.objects.filter(is_published=True))
 	departments = list( Department.objects.all() )
 	for form in forms:
-		context[form] = {}
-		types = list(QuestionType.objects.all())
-		types_overall_rating=list(FeedbackResponse.objects.filter(question__feedback_form =form).values('question__type__title').annotate(avg =Avg('answer')))
-		for type_ in types_overall_rating:
-			type_['avg']=round(((type_['avg']/5)*100),2)
-			if type_['avg'] > 75:
-				type_['color'] = 'green'
-			elif type_['avg'] > 60:
-				type_['color'] = 'orange'
+		if list(FeedbackResponse.objects.filter(question__feedback_form=form)):
+			context[form] = {}
+			types = list(QuestionType.objects.all())
+			types_overall_rating=list(FeedbackResponse.objects.filter(question__feedback_form =form).values('question__type__title').annotate(avg =Avg('answer')))
+			for type_ in types_overall_rating:
+				type_['avg']=round(((type_['avg']/5)*100),2)
+				if type_['avg'] > 75:
+					type_['color'] = 'green'
+				elif type_['avg'] > 60:
+					type_['color'] = 'orange'
+				else:
+					type_['color'] = 'red'
+			context[form]['types_overall_rating'] =types_overall_rating
+		overall_list=FeedbackResponse.objects.filter(question__feedback_form=form).values("question__feedback_form").annotate(avgs=Avg('answer')).first()
+			
+		context[form]['scores'] = {}
+		context[form]['scores'][6] = {'val':0,'perc':100}
+		maxv = 0
+		for i in range(1,6):
+			context[form]['scores'][i] = {}
+			context[form]['scores'][i]['val'] = FeedbackResponse.objects.filter(question__feedback_form=form,answer=i).count()
+			context[form]['scores'][6]['val'] += context[form]['scores'][i]['val']
+			if maxv < context[form]['scores'][i]['val']:
+				maxv = context[form]['scores'][i]['val']
+
+		for i in range(1,6):
+			context[form]['scores'][i]['perc'] = round((context[form]['scores'][i]['val']/maxv)*100,2)
+		context[form]['overall']=overall_list
+		print(context[form]['overall'])
+		context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
+		context[form]['score'] = []
+		context[form]['columns'] = ["Name", "Dept"]
+		context[form]['columns'].extend([t.tag.tag_title for t in context[form]['tags']])
+		context[form]['columns'].append("Overall")
+
+		for faculty in Faculty.objects.all():
+			cur_faculty = []
+			cur_faculty.append(faculty.profile.name)
+			cur_faculty.append(TeacherSubject.objects.get(teacher=faculty).classroom.department.name)
+			
+			tag_merge = {}
+			for resp in context[form]['tags']:
+					cur_resp = list(FeedbackResponse.objects.filter(question__feedback_form=form,
+													teacher_subject__teacher=faculty, question=resp)
+													.values("question__tag__tag_title")
+													.annotate(avgs=Avg('answer')))
+					if cur_resp[0]['question__tag__tag_title'] not in tag_merge:
+						tag_merge[cur_resp[0]['question__tag__tag_title']] = []
+					tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
+			
+			tag_score = {}
+			overall = 0
+			for k, v in tag_merge.items():
+				cur_avg = 0
+				for val in v:
+					cur_avg += val
+				cur_avg /= len(v)
+				tag_score[k] = round(cur_avg, 2)
+				overall += cur_avg
+			if tag_score :
+				overall /= len(tag_score.keys())
+				overall = round(overall, 2)
 			else:
-				type_['color'] = 'red'
-		context[form]['types_overall_rating'] =types_overall_rating
-	
-	context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
-	context[form]['score'] = []
-	context[form]['columns'] = ["Name", "Dept"]
-	context[form]['columns'].extend([t.tag.tag_title for t in context[form]['tags']])
-	context[form]['columns'].append("Overall")
+				overall = 0
 
-	for faculty in Faculty.objects.all():
-		cur_faculty = []
-		cur_faculty.append(faculty.profile.name)
-		cur_faculty.append(TeacherSubject.objects.get(teacher=faculty).classroom.department.name)
-		
-		tag_merge = {}
-		for resp in context[form]['tags']:
-				cur_resp = list(FeedbackResponse.objects.filter(question__feedback_form=form,
-												teacher_subject__teacher=faculty, question=resp)
-												.values("question__tag__tag_title")
-												.annotate(avgs=Avg('answer')))
-				if cur_resp[0]['question__tag__tag_title'] not in tag_merge:
-					tag_merge[cur_resp[0]['question__tag__tag_title']] = []
-				tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
-		
-		tag_score = {}
-		overall = 0
-		for k, v in tag_merge.items():
-			cur_avg = 0
-			for val in v:
-				cur_avg += val
-			cur_avg /= len(v)
-			tag_score[k] = round(cur_avg, 2)
-			overall += cur_avg
-		overall /= len(tag_score.keys())
-		overall = round(overall, 2)
-
-		for resp in context[form]['tags']:
-			cur_tag = resp.tag.tag_title 
-			cur_faculty.append(tag_score[cur_tag])
-		cur_faculty.append(overall)
-		context[form]['score'].append(cur_faculty)
-
-	'''
-	return render_to_response('auditor_dashboard.html',locals())
-
-	infrastructure_data =list(FeedbackResponse.objects.filter(question__type__title="Infrastructure").values('question').annotate(dsum=Sum('answer')))
-	academics_data = list(FeedbackResponse.objects.filter(question__type__title="Academics").values('question').annotate(dsum=Sum('answer')))
-	for data in infrastructure_data:
-		question_id = data['question']
-		data['question'] = (Question.objects.get(id=question_id)).text
-
-	for data in academics_data:
-		question_id = data['question']
-		data['question'] = (Question.objects.get(id=question_id)).text
-
-	#print(infrastructure_data)
-	context = {'infrastructure':infrastructure_data ,'academics':academics_data}
-	
-	def student_count(form):
-	department = list( Department.objects.all() )
-	types = list()
-	student_count_deptwise ={}
-	for dept in department:
-		print(dept.name)
-		student_count_deptwise[dept.name] = len(FeedbackResponse.objects.filter(question__feedback_form__title = 'Feedback - I',student__classroom__department__name =dept.name))
-
+			for resp in context[form]['tags']:
+				cur_tag = resp.tag.tag_title 
+				cur_faculty.append(tag_score[cur_tag])
+			cur_faculty.append(overall)
+			context[form]['score'].append(cur_faculty)
 
 	
-	'''
 	return render_to_response('auditor_dashboard.html',locals())
 
 @auditor_required
