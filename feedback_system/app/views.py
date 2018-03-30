@@ -209,7 +209,7 @@ def auditor_dashboard(request):
 	for faculty in Faculty.objects.all():
 		cur_faculty = []
 		cur_faculty.append(faculty.profile.name)
-		cur_faculty.append(TeacherSubject.objects.get(teacher=faculty).classroom.department.name)
+		cur_faculty.append(TeacherSubject.objects.filter(teacher=faculty)[0].classroom.department.name)
 		
 		tag_merge = {}
 		for resp in context[form]['tags']:
