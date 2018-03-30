@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,58 +10,36 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
         <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="{% static 'star-rating-svg.css' %}">
     
     <style>
         html{
             font-family: 'Roboto Condensed', sans-serif;
         }
-        @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
-
-        fieldset, label { margin: 0; padding: 0; }
-        body{ margin: 20px; }
-        h1 { font-size: 1.5em; margin: 10px; }
-
-        /****** Style Star Rating Widget *****/
-
-        .rating { 
-        border: none;
-        float: left;
+       
+        .side{
+            height: 80%;
         }
 
-        .rating > input { display: none; } 
-        .rating > label:before { 
-        margin: 5px;
-        font-size: 1.25em;
-        font-family: FontAwesome;
-        display: inline-block;
-        content: "\f005";
+        .sidenav {
+            height: 100%;
+            width: 110px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: rgb(245, 245, 245);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
         }
-
-        .rating > .half:before { 
-        content: "\f089";
-        position: absolute;
+        .collection-item{
+            height: 50px;
+            font-size: 20px;
         }
-
-        .rating > label { 
-        color: #ddd; 
-        float: right; 
-        }
-
-        /***** CSS Magic to Highlight Stars on Hover *****/
-
-        .rating > input:checked ~ label, /* show gold star when clicked */
-        .rating:not(:checked) > label:hover, /* hover current star */
-        .rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
-
-        .rating > input:checked + label:hover, /* hover current star when changing rating */
-        .rating > input:checked ~ label:hover,
-        .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
-        .rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
-
-
-        .side-nav{
-            margin-top: 75px;
-            width: 20%;
+        #toggleSideNav{
+            float: right;
+            position: relative;
         }
         .brand-logo{
             margin-left: 10px;
@@ -115,10 +94,7 @@
             text-align: center;
             font: 32px Arial, sans-serif;
           }
-        nav{
-            min-height: 75px;
-            background-color: #1a237e;
-        }
+        
         #chart1div {
             width		: 75%;
             height		: 225px;
@@ -128,6 +104,22 @@
         #chart2div {
             width: 70%;
             height: 200px;
+        }
+
+        .charts{
+        margin-top: 20px;
+        }
+
+
+    .chart__label {
+        padding-left: 10px;
+        line-height: 30px;
+        color: black;
+    }
+
+   nav{
+            
+            background-color: #1a237e;
         }
     </style>
 </head>
@@ -148,13 +140,10 @@
                 <a href="{%  url 'faculty_dashboard'%} " class="brand-logo">Faculty Dashboard</a>
                 <ul class="right hide-on-med-and-down">
                     <li>
-        
                         <a class="profile dropdown-trigger waves-effect waves-light btn-flat" data-target='dropdown1'>
                             <i class="material-icons left">person</i>
                             <strong>Hello, {{user.faculty.profile.name}}</strong>
                         </a>
-        
-        
                     </li>
         
                 </ul>
@@ -164,36 +153,50 @@
 
     
     
-    <div class="side-nav fixed">
-        <div class="container">
-            <h4>Evaluations</h4>
-        </div>
-        <div>
-            <table id="table_id" class="centereddisplay">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Your forms</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-            
-                <tbody>
+    <div id="mySidenav" class="sidenav">
+        <div class="side" style="display: none;">
+    
+            <div style="margin: 0 10px 0 10px">
+                <ul class="collection with-header">
+                    <li class="collection-header">
+                        <h4>Evaluations</h4>
+                    </li>
                     {% for form in forms %}
-                    <tr>
-                        <a href="#form{{form.id}}">
-                            <td>25-03-2018</td>
-                            <td>{{form.title}}</td>
-                            {% if form.is_active %}
-                            <td>Open</td>
+                    <li class="collection-item dismissable">
+                        <div>{{form.title}} {% if form.is_active %}
+                            <a href="#!" class="secondary-content">
+                                <i style="color: green;" class="material-icons">visibility</i>
+                            </a>
                             {% else %}
-                            <td>Closed</td>
+                            <a href="#!" class="secondary-content">
+                                <i style="color: red;" class="material-icons">visibility</i>
+                            </a>
                             {% endif %}
-                        </a>
-                    </tr>
-                    {%  endfor %}
-                </tbody>
-            </table>
+    
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+    
+        </div>
+    
+        <div class="side">
+            {% for form in forms %} {% if form.is_active %}
+            <a href="#!" class="collapsed-btn btn-flat">
+                <i style="color: green;" class="material-icons">visibility</i>
+            </a>
+            {% else %}
+            <a href="#!" class="collapsed-btn btn-flat">
+                <i style="color: red;" class="material-icons">visibility</i>
+            </a>
+            {% endif %} {% endfor %}
+        </div>
+    
+        <div>
+            <a id="toggleSideNav" class="waves-effect waves-light">
+                <i style="color: black;" class="material-icons left">chevron_right</i>
+            </a>
         </div>
     </div>
 
@@ -219,10 +222,66 @@
                                     <div class="row">
                                         <div>
                                             <div class="card-panel">
-                                                <span class="card-title">Overall</span>
-
+                                                <p class="card-title">Overall</p>
+                                                <div class="row">
+                                                    <div style="border-right: 1px solid rgb(214, 208, 208);" class="col s4 center-align">
+                                                        <div>
+                                                            <h1 style="font-size: 60px;">{{subdata.overall.avg.0.avg}}</h1>
+                                                        </div>
+                                                        <div class="my-rating rating{{subject.id}}"></div>
+                                                        <div>
+                                                            <h5>
+                                                                <i class="material-icons">person</i>{{subdata.overall.scores.6.val}} Total
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                
+                                                
+                                                    <div class="col s8">
+                                                
+                                                
+                                                
+                                                        <div class="charts">
+                                                            <div class="chart chart--dev">
+                                                
+                                                                <ul class="chart--horiz">
+                                                
+                                                                    <li style="background-color: #88b131;width: {{subdata.overall.scores.5.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                             {{subdata.overall.scores.5.val}}
+                                                                        </div>
+                                                                    </li>
+                                                
+                                                                    <li style="background-color: #99cc00;width: {{subdata.overall.scores.4.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                             {{subdata.overall.scores.4.val}}
+                                                                        </div>
+                                                                    </li>
+                                                                    <li style="background-color: #ffcf02;width: {{subdata.overall.scores.3.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                             {{subdata.overall.scores.3.val}}
+                                                                        </div>
+                                                                    </li>
+                                                                    <li style="background-color: #ff9f02;width: {{subdata.overall.scores.2.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                             {{subdata.overall.scores.2.val}}
+                                                                        </div>
+                                                                    </li>
+                                                                    <li style="background-color: #ff6f31;width: {{subdata.overall.scores.1.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                             {{subdata.overall.scores.1.val}}
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                
+                                                
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        
                                         <div>
                                             <div class="card-panel ">
                                                 
@@ -437,8 +496,41 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="{% static 'jquery.star-rating-svg.js' %}"></script>
+    
     <script>
         $(document).ready(function () {
+            {% for form,data in context.items %}
+            $(".my-rating").starRating({
+                starSize: 30,
+                useFullStars: false,
+                activeColor: "#5A5A5A",
+                callback: function (currentRating, $el) {
+                    
+                }
+            });
+            
+            {% for subject, subdata in data.items %}
+            
+            var rate = parseFloat("{{subdata.overall.avg.0.avg}}");
+            var diff = rate - Math.floor(rate);
+            console.log(rate, diff);
+            if (diff >= 0.75) {
+                rate = rate + (1 - diff) + '.0';
+            } else if (diff <= 0.25) {
+                rate = rate - diff + '.0';
+            } else {
+                rate = Math.floor(rate) + 0.5;
+            }
+            $('#rating_h{{subject.id}}').text(rate);
+            $('.rating{{subject.id}}').starRating('setRating', rate);
+            console.log('rating called');
+            $('.rating{{subject.id}}').starRating('setReadOnly', true);
+            {% endfor %}
+            {% endfor %}
+
+            
+
              $('.button-collapse').sideNav({
                 menuWidth: 300, // Default is 300
                 edge: 'left', // Choose the horizontal origin
@@ -453,6 +545,36 @@
                 searching: false,
 
             });
+
+            var collapsed = false;
+            $('#toggleSideNav').click(function () {
+
+                if (collapsed) {
+                    doCollapsed();
+                } else {
+                    doExpanded();
+                }
+
+                collapsed = !collapsed;
+
+            });
+
+            function doExpanded() {
+                $('#mySidenav').css('width', '250px');
+                $('#main').css('margin-left', '250px');
+
+                //console.log($('#mySidenav').children().text());
+                $('#mySidenav').children('.side').toggle();
+                $('#toggleSideNav i').text('chevron_left')
+            }
+
+            function doCollapsed() {
+                $('#mySidenav').css('width', '110px');
+                $('#main').css('margin-left', '110px');
+
+                $('#mySidenav').children('.side').toggle();
+                $('#toggleSideNav i').text('chevron_right')
+            }
         });
     </script>
 </body> 

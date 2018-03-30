@@ -72,14 +72,28 @@ def faculty_dashboard(request):
 		context[form] = {}
 		for teacher_subject in teacher_subjects:
 			context[form][teacher_subject.subject] = {}
-			avg = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form).values('teacher_subject').annotate(avg =Avg('answer',output_field=IntegerField())))
+			context[form][teacher_subject.subject]['overall'] = {}
+			avg = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form).values('teacher_subject').annotate(avg =Avg('answer')))
 			for data in avg:
 				temp =None
 				for key,value in data.items():
 					if(key == 'avg'):
 						temp =value
-				data['counter_avg'] =5-temp
-			context[form][teacher_subject.subject]['overall'] = avg
+				data['avg'] = round(temp,2)
+				data['counter_avg'] = 5-round(temp, 2)
+			context[form][teacher_subject.subject]['overall'] = {}
+			context[form][teacher_subject.subject]['overall']['avg'] = avg
+			context[form][teacher_subject.subject]['overall']['scores'] = {6:{'val':0,'perc':100}}
+			maxv = 0
+			for i in range(1, 6):
+				context[form][teacher_subject.subject]['overall']['scores'][i] = {}
+				context[form][teacher_subject.subject]['overall']['scores'][i]['val'] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject, question__feedback_form=form, answer=i).count()
+				if maxv < context[form][teacher_subject.subject]['overall']['scores'][i]['val']:
+					maxv = context[form][teacher_subject.subject]['overall']['scores'][i]['val']
+				context[form][teacher_subject.subject]['overall']['scores'][6]['val'] += context[form][teacher_subject.subject]['overall']['scores'][i]['val']
+				
+			for i in range(1, 6):
+				context[form][teacher_subject.subject]['overall']['scores'][i]['perc'] = int((context[form][teacher_subject.subject]['overall']['scores'][i]['val']/maxv)*100)
 
 			context[form][teacher_subject.subject]['responses'] = {}
 			context[form][teacher_subject.subject]['strength']=set()
