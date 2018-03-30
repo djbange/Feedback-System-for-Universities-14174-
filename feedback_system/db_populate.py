@@ -1,6 +1,6 @@
 from app import models
 from random import choice,randint
-
+from app.final_new import get_tags
 
 '''
 2500 students
@@ -47,15 +47,15 @@ DEPARTMENTS = {
 
 YEARS = [
     'FE',
-    'SE',
-    'TE',
-    'BE'
+    #'SE',
+    #'TE',
+    #'BE'
 ]
 
 DIVS = [
     'A',
-    'B',
-    'C'
+    #'B',
+    #'C'
 ]
 
 SUBS = {
@@ -89,6 +89,16 @@ SUBS = {
     ]}
 }
 
+TAGS = [
+    "Relevance",
+    "Dedication",
+    "Usefulness",
+    "Effectiveness",
+    "Communication",
+    "Punctuality",
+    "Motivation"
+]
+
 def gen_subs():
     print('generating subjects')
     for dept,subdict in SUBS.items():
@@ -113,10 +123,10 @@ def gen_classroom(dept,year,div):
     classroom.save()
     return classroom
 
-def gen_faculty(department):
+def gen_faculty(department, cur_count):
     dept = models.Department.objects.get(name=department)
     name =  gen_name() 
-    user = models.User(username=DEPARTMENTS[dept.name]+name.replace(' ',''),password='admin123')
+    user = models.User.objects.create_user(username="faculty" + str(cur_count), password='admin123')
     user.save()
     email = name.replace(' ','')+'@college.com'
     phone_number = '9090909090'
@@ -127,16 +137,41 @@ def gen_faculty(department):
     print(dept,name,'generated')
     return faculty
 
-def gen_student(rollno,dept,year,div):
-    user = models.User(username=rollno,password='admin123')
-    user.save()
+def gen_auditor():
     name =  gen_name() 
+    user = models.User.objects.create_user(username="auditor1", password='admin123')
+    user.save()
+    email = name.replace(' ','')+'@college.com'
+    phone_number = '9090909090'
+    profile = models.Profile(name=name,email=email,phone_number=phone_number)
+    profile.save()
+    auditor = models.Auditor(user=user,profile=profile)
+    auditor.save()
+    return auditor
+
+def gen_coordinator():
+    name =  gen_name() 
+    user = models.User.objects.create_user(username="coordinator1", password='admin123')
+    user.save()
+    email = name.replace(' ','')+'@college.com'
+    phone_number = '9090909090'
+    profile = models.Profile(name=name,email=email,phone_number=phone_number)
+    profile.save()
+    coordinator = models.Coordinator(user=user,profile=profile)
+    coordinator.save()
+    return coordinator
+
+
+def gen_student(rollno,dept,year,div):
+    user = models.User.objects.create_user(username="student" + str(rollno), password='admin123')
+    user.save()
+    name =  gen_name()
     classroom = models.Classroom.objects.get(
         department=models.Department.objects.get(name=dept),
         year=year,
         div=div
     )
-    email = rollno+'@college.com'
+    email = str(rollno)+'@college.com'
     phone_number = '9090909090'
     profile = models.Profile(name=name,email=email,phone_number=phone_number)
     profile.save()
@@ -159,15 +194,21 @@ def fill_feedback(student, form, questions, teacher_subjects):
             models.FeedbackResponse(student=student,question=q,answer=choice(PARAMS),teacher_subject=teacher_subject).save()
     print(student,'feedback generated')
 
-# if __name__ == '__main__':
+def gen_tags():
+    print("generating tags")
+    for tag in TAGS:
+        models.Tag(tag_title=tag).save()
+
 gen_depts()
-# gen_classrooms()
 gen_subs()
 gen_question_types()
+gen_auditor()
+gen_coordinator()
+
 for dept,dept_code in DEPARTMENTS.items():
     faculties = []
-    for _ in range(15):
-        faculties.append(gen_faculty(dept))
+    for i in range(15):
+        faculties.append(gen_faculty(dept, i))
     subs = set(SUBS[dept].keys())
     faculty_subject = []
     temp_subs = []
@@ -185,18 +226,25 @@ for dept,dept_code in DEPARTMENTS.items():
                                                     subject=f_s[1])
                 teacher_subject.save()
             for i in range(1,5):
-                gen_student(dept_code+year+div+str(i),dept,year,div)
+                gen_student(i,dept,year,div)
 
 form  = models.FeedbackForm(title='Feedback Form',is_active=True,is_published=True)
 form.save()
 print('form created')
 
-for i in range(0, len(questions), 2):
+for i in range(0, len(questions), 3):
     question = questions[i].strip()
     question_type = models.QuestionType.objects.get(title=questions[i+1].strip())
-
-    models.Question(text=question,type=question_type,feedback_form=form).save()
-    print('question created')
+    tag = questions[i+2].strip()
+    cur_tag = None
+    try:
+        cur_tag = models.Tag.objects.get(tag_title=tag)
+    except:
+        pass
+    if cur_tag is None and tag != "None":
+        cur_tag = models.Tag(tag_title=tag).save()
+    models.Question(text=question,type=question_type,tag=cur_tag,feedback_form=form).save()
+    print('question created:', question)
 
 all_questions = models.Question.objects.filter(feedback_form=form)
 question_dict = {}

@@ -31,11 +31,6 @@ def get_sentiment(sentence):
 	print("Sentiment is",type)
 	return type
 
-
-ACADEMICS = QuestionType.objects.get(title='Academics')
-INFRASTRUCTURE = QuestionType.objects.get(title='Infrastructure')
-FACULTY = QuestionType.objects.get(title='Faculty')
-
 @login_required
 def home(request):
     return render(request, 'base-vuetify.html')
@@ -173,7 +168,11 @@ def auditor_dashboard(request):
 	context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
 	context[form]['score'] = []
 	context[form]['columns'] = ["Name", "Dept"]
-	context[form]['columns'].extend([t.tag.tag_title for t in context[form]['tags']])
+	de_dupe = {}
+	for t in context[form]['tags']:
+		if t.tag is not None and t.tag.tag_title not in de_dupe:
+			de_dupe[t.tag.tag_title] = 1
+			context[form]['columns'].append(t.tag.tag_title)
 	context[form]['columns'].append("Overall")
 
 	for faculty in Faculty.objects.all():
@@ -191,6 +190,7 @@ def auditor_dashboard(request):
 					tag_merge[cur_resp[0]['question__tag__tag_title']] = []
 				tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
 		
+		print("Akshay tag_merge:", tag_merge)
 		tag_score = {}
 		overall = 0
 		for k, v in tag_merge.items():
@@ -202,10 +202,14 @@ def auditor_dashboard(request):
 			overall += cur_avg
 		overall /= len(tag_score.keys())
 		overall = round(overall, 2)
-
+		print("Akshay tag_score:", tag_score)
+		de_dupe = {}
 		for resp in context[form]['tags']:
-			cur_tag = resp.tag.tag_title 
-			cur_faculty.append(tag_score[cur_tag])
+			if resp.tag is not None and resp.tag.tag_title not in de_dupe:
+				de_dupe[resp.tag.tag_title] = 1
+				cur_tag = resp.tag.tag_title
+				cur_faculty.append(tag_score[cur_tag])
+		print("Akshay cur_faculty:", cur_faculty)
 		cur_faculty.append(overall)
 		context[form]['score'].append(cur_faculty)
 
@@ -350,6 +354,9 @@ def edit_form_title(request):
 
 @coordinator_required
 def edit_form(request, formid=None):
+	ACADEMICS = QuestionType.objects.get(title='Academics')
+	INFRASTRUCTURE = QuestionType.objects.get(title='Infrastructure')
+	FACULTY = QuestionType.objects.get(title='Faculty')
 	if formid:
 		form = FeedbackForm.objects.get(pk=formid)
 	else:
@@ -431,7 +438,10 @@ def edit_form_question(request):
 
 
 @student_required
-def feedback_faculty(request,formid):	
+def feedback_faculty(request,formid):
+	ACADEMICS = QuestionType.objects.get(title='Academics')
+	INFRASTRUCTURE = QuestionType.objects.get(title='Infrastructure')
+	FACULTY = QuestionType.objects.get(title='Faculty')	
 	curr_user = request.user
 	teachings = TeacherSubject.objects.filter(classroom=curr_user.student.classroom)
 	courses = {teaching.subject: teaching.teacher for teaching in teachings}
@@ -447,6 +457,9 @@ def feedback_faculty(request,formid):
 @student_required
 def student_feedback(request, formid):
 	print('in student_feedback',formid)
+	ACADEMICS = QuestionType.objects.get(title='Academics')
+	INFRASTRUCTURE = QuestionType.objects.get(title='Infrastructure')
+	FACULTY = QuestionType.objects.get(title='Faculty')
 	curr_user = request.user
 	feedbackform = FeedbackForm.objects.get(pk=formid)
 	teachings = TeacherSubject.objects.filter(classroom=curr_user.student.classroom)
@@ -605,6 +618,9 @@ def signup(request):
 	pass
 
 def login(request):
+	ACADEMICS = QuestionType.objects.get(title='Academics')
+	INFRASTRUCTURE = QuestionType.objects.get(title='Infrastructure')
+	FACULTY = QuestionType.objects.get(title='Faculty')
 	if request.method == 'POST':
 		form=LogInForm(request.POST)
 		if form.is_valid():
