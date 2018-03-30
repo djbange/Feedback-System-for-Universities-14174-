@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{% static 'app/datatables-buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'star-rating-svg.css' %}">    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auditor Dashboard</title>
 
@@ -196,7 +197,7 @@
                     
                                 <div>
                                     <div class="row">
-                                        <div class="col s7">
+                                        <div class="col s6">
                                             <div class="card-panel ">
                     
                                                 <table class="centered">
@@ -217,16 +218,66 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="col s5">
-                                            <div class="card-panel">
-                    
-                                                <span style="font-size: 20px;" class="card-title">Overall</span>
-                    
-                    
-                    
-                                                <div id="chart1div"></div>
-                    
-                                            </div>
+                                        <div class="col s6">
+                                                <div class="card-panel">
+                                                        <p class="card-title">Overall</p>
+                                                        <div class="row">
+                                                            <div style="border-right: 1px solid rgb(214, 208, 208);" class="col s4 center-align">
+                                                                <div>
+                                                                    <h1 style="font-size: 60px;">{{data.overall.avgs}}</h1>
+                                                                </div>
+                                                                <div class="my-rating rating{{form.id}}"></div>
+                                                                <div>
+                                                                    <h5>
+                                                                        <i class="material-icons">person</i>{{data.scores.6.val}} Total
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                        
+                                                            <div class="col s8">
+                                                        
+                                                        
+                                                        
+                                                                <div class="charts">
+                                                                    <div class="chart chart--dev">
+                                                        
+                                                                        <ul class="chart--horiz">
+                                                        
+                                                                            <li style="background-color: #88b131;width: {{data.scores.5.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                     {{data.scores.5.val}}
+                                                                                </div>
+                                                                            </li>
+                                                        
+                                                                            <li style="background-color: #99cc00;width: {{data.scores.4.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                    {{data.scores.4.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <li style="background-color: #ffcf02;width: {{data.scores.3.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                    {{data.scores.3.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <li style="background-color: #ff9f02;width: {{data.scores.2.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                        {{data.scores.2.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <li style="background-color: #ff6f31;width: {{data.scores.1.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                        {{data.scores.1.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                        
+                                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                         </div>
                                     </div>
                                 </div>
@@ -359,6 +410,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+    <script src="{% static 'jquery.star-rating-svg.js' %}"></script>    
 
     <script>
         $(document).ready(function () {
@@ -367,6 +419,32 @@
             $('.scrollspy').scrollSpy();
             $('select').material_select();
 
+            $(".my-rating").starRating({
+                starSize: 30,
+                useFullStars: false,
+                activeColor: "#5A5A5A",
+                callback: function (currentRating, $el) {
+                    
+                }
+            });
+
+            {% for form,data in context.items %}
+            
+            var rate = parseFloat("{{data.overall.avgs}}");
+            var diff = rate - Math.floor(rate);
+            console.log(rate, diff);
+            if (diff >= 0.75) {
+                rate = rate + (1 - diff) + '.0';
+            } else if (diff <= 0.25) {
+                rate = rate - diff + '.0';
+            } else {
+                rate = Math.floor(rate) + 0.5;
+            }
+            $('#rating_h{{form.id}}').text(rate);
+            $('.rating{{form.id}}').starRating('setRating', rate);
+            console.log('rating called');
+            $('.rating{{form.id}}').starRating('setReadOnly', true);
+            {% endfor %}
             var collapsed = false;
             $('#toggleSideNav').click(function () {
 
@@ -404,6 +482,8 @@
                 $('#mySidenav').children('.side').toggle();
                 $('#toggleSideNav i').text('chevron_right')
             }
+
+            $('#table_id_filter').find('label').attr('style','font-size:20px;');
         });
     </script>
 </body>
