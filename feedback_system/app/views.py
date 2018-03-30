@@ -238,8 +238,12 @@ def ajax_text_response(request):
 def ajax_predict_tags(request):
 	text = request.POST['text']
 	tag = get_tags(text)
-	print("Tag id is", tag)
-	return JsonResponse({'tag':tag})
+	print("Tag is", tag)
+	if tag != -1:
+		tag_obj = Tag.objects.get(pk=tag)
+		return JsonResponse({'tag':tag_obj.tag_title})
+	else:
+		return JsonResponse({'tag':''})
 
 
 @coordinator_required
