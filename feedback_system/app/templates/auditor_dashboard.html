@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{% static 'app/datatables-buttons.css' %}">
-    <link rel="stylesheet" href="{% static 'star-rating-svg.css' %}">    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auditor Dashboard</title>
 
@@ -97,6 +96,162 @@
         .sidenav {padding-top: 15px;}
         .sidenav a {font-size: 18px;}
         }
+
+
+.bar-graph {
+  padding: 0;
+  width: 70%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: flex-end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  height: 425px;
+  margin: 0;
+}
+
+.bar-graph li {
+  display: block;
+  padding: 1.5625rem 0;
+  position: relative;
+  text-align: center;
+  vertical-align: bottom;
+  border-radius: 4px 4px 0 0;
+  max-width: 30%;
+  height: 100%;
+  margin: 0 1.8% 0 0;
+  -webkit-flex: 1 1 15%;
+      -ms-flex: 1 1 15%;
+          flex: 1 1 15%;
+}
+
+.bar-graph .bar-graph-axis {
+  -webkit-flex: 1 1 8%;
+      -ms-flex: 1 1 8%;
+          flex: 1 1 8%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.bar-graph .bar-graph-label {
+  margin: 0;
+  background-color: none;
+  color: #8a8a8a;
+  position: relative;
+}
+
+@media print, screen and (min-width: 40em) {
+  .bar-graph .bar-graph-label:before, .bar-graph .bar-graph-label:after {
+    content: "";
+    position: absolute;
+    border-bottom: 1px dashed #8a8a8a;
+    top: 0;
+    left: 0;
+    height: 50%;
+    width: 20%;
+  }
+}
+
+@media print, screen and (min-width: 40em) and (min-width: 64em) {
+  .bar-graph .bar-graph-label:before, .bar-graph .bar-graph-label:after {
+    width: 30%;
+  }
+}
+
+@media print, screen and (min-width: 40em) {
+  .bar-graph .bar-graph-label:after {
+    left: auto;
+    right: 0;
+  }
+}
+
+.bar-graph .percent {
+  letter-spacing: -3px;
+  opacity: 0.4;
+  width: 100%;
+  font-size: 1.875rem;
+  position: absolute;
+}
+
+@media print, screen and (min-width: 40em) {
+  .bar-graph .percent {
+    font-size: 3.875rem;
+  }
+}
+
+.bar-graph .percent span {
+  font-size: 1.875rem;
+}
+
+.bar-graph .description {
+  font-weight: 800;
+  opacity: 0.5;
+  text-transform: uppercase;
+  width: 100%;
+  font-size: 3px;
+  bottom: 20px;
+  position: absolute;
+  font-size: 15;
+  overflow: hidden;
+}
+
+.bar-graph .bar.primary {
+  border: 1px solid #1779ba;
+  background: linear-gradient(#2196e3, #1779ba 70%);
+}
+
+.bar-graph .bar.secondary {
+  border: 1px solid #767676;
+  background: linear-gradient(#909090, #767676 70%);
+}
+
+.bar-graph .bar.success {
+  border: 1px solid #3adb76;
+  background: linear-gradient(#65e394, #3adb76 70%);
+}
+
+.bar-graph .bar.warning {
+  border: 1px solid #ffae00;
+  background: linear-gradient(#ffbe33, #ffae00 70%);
+}
+
+.bar-graph .bar.alert {
+  border: 1px solid #cc4b37;
+  background: linear-gradient(#d67060, #cc4b37 70%);
+}
+
+.rcorners1 {
+    border-radius: 50%;
+    background: #73AD21;
+    padding: 20px; 
+    width: 200px;
+    height: 200px; 
+    opacity: 0.6;
+    font-size: 25px;
+    vertical-align: middle; 
+    
+}
+
+.label {
+    display:inline-block;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    height: 17px; 
+    padding: 2px 3px 2px 3px;
+    text-align: center;
+    min-width: 16px;
+  }
+
+
     </style>
 </head>
 
@@ -104,21 +259,45 @@
 
 <nav>
     <div class="nav-wrapper">
-        <div class="container">
-            <a href="#!" class="brand-logo">Auditor Dashboard</a>
-        </div>
-        <div>
-            <ul class="right hide-on-med-and-down">
-                <li>
-                    <a class="profile-btn dropdown-trigger waves-effect waves-light btn-flat" data-target='dropdown1'>
-                        <i class="material-icons left">person</i>
-                        <b>Hello, {{user.profile.name}}</b>
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <a href="{%url 'auditor_dashboard'%}" class="brand-logo">`````````````````Auditor Dashboard</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse">
+            <i class="material-icons">menu</i>
+        </a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li>
+                <a class='dropdown-button' data-activates="dropdown1" href="#">
+                    <i class="material-icons left">person</i><strong>Hello, Auditor 1<i class="material-icons right">arrow_drop_down</i></strong></a>
+            </li>
+            <li>
+                <a href=""></a>
+            </li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo" style = "border : 0;">
+            <li>
+                <a href="{%url 'auditor_profile'%}">Profile</a>
+            </li>
+            <li>
+                <a href="{% url 'change_password' %}">Change Password</a>
+            </li>
+            <li>
+                <a href="{% url 'logout_view' %}">Logout</a>
+            </li>
+            </li>
+        </ul>
+        <ul class="dropdown-content" id="dropdown1">
+            <li>
+                <a href="{%url 'auditor_profile'%}">Profile</a>
+            </li>
+            <li>
+                <a href="{% url 'change_password' %}">Change Password</a>
+            </li>
+            <li>
+                <a href="{% url 'logout_view' %}">Logout</a>
+            </li>
+        </ul>
     </div>
-</nav>
+
+    </nav>
 
 <div id="mySidenav" class="sidenav">
     <div class="side" style="display: none;">
@@ -189,6 +368,7 @@
             </div>
     
             <div class="card-content">
+                <center>
                 <div class="row">
                     <div class="row">
                         <div class="col s12">
@@ -197,103 +377,56 @@
                     
                                 <div>
                                     <div class="row">
+                                      
                                         <div class="col s6">
-                                            <div class="card-panel ">
+                                            <div class="card-panel">
                     
-                                                <table class="centered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="font-size: 30px;">Types</th>
-                                                            <th style="font-size: 30px;">Overall Rating</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                <span style="font-size: 40px;" class="card-title">Categorial Rating</span>
+                    
+                                                <ul class="bar-graph">
+                                                
                                                     {% for overall in data.types_overall_rating %}
-                                                        <tr>
-                                                            <td style="font-size: 20px;">{{overall.question__type__title}}</td>
-                                                            <td style="font-size: 20px; color: {{overall.color}};">{{overall.avg}}%</td>                                                            
-                                                        </tr>
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
+                                                
+                                                    <li style="background-color:{{overall.color}};height: {{overall.avg}}%;" title="50">
+                                                                    <div class="percent" style="font-size:36px">{{overall.avg}}<span>%</span></div>
+                                                                    <div class="description">{{overall.question__type__title}}</div>
+                                                                  </li>
+                                                         
+                                                                                                                 
+                                                  
+                                                {% endfor %}
+                                                
+                                                
+                                                    </ul>
+                                                    
+                                                  
+                                                  
+                    
+                                                <div id="chart1div"></div>
+                    
                                             </div>
                                         </div>
+<center>
                                         <div class="col s6">
                                                 <div class="card-panel">
-                                                        <p class="card-title">Overall</p>
-                                                        <div class="row">
-                                                            <div style="border-right: 1px solid rgb(214, 208, 208);" class="col s4 center-align">
-                                                                <div>
-                                                                    <h1 style="font-size: 60px;">{{data.overall.avgs}}</h1>
-                                                                </div>
-                                                                <div class="my-rating rating{{form.id}}"></div>
-                                                                <div>
-                                                                    <h5>
-                                                                        <i class="material-icons">person</i>{{data.scores.6.val}} Total
-                                                                    </h5>
-                                                                </div>
-                                                            </div>
-                                                        
-                                                        
-                                                            <div class="col s8">
-                                                        
-                                                        
-                                                        
-                                                                <div class="charts">
-                                                                    <div class="chart chart--dev">
-                                                        
-                                                                        <ul class="chart--horiz">
-                                                        
-                                                                            <li style="background-color: #88b131;width: {{data.scores.5.perc}}%;">
-                                                                                <div class="chart__label">
-                                                                                     {{data.scores.5.val}}
-                                                                                </div>
-                                                                            </li>
-                                                        
-                                                                            <li style="background-color: #99cc00;width: {{data.scores.4.perc}}%;">
-                                                                                <div class="chart__label">
-                                                                                    {{data.scores.4.val}}
-                                                                                </div>
-                                                                            </li>
-                                                                            <li style="background-color: #ffcf02;width: {{data.scores.3.perc}}%;">
-                                                                                <div class="chart__label">
-                                                                                    {{data.scores.3.val}}
-                                                                                </div>
-                                                                            </li>
-                                                                            <li style="background-color: #ff9f02;width: {{data.scores.2.perc}}%;">
-                                                                                <div class="chart__label">
-                                                                                        {{data.scores.2.val}}
-                                                                                </div>
-                                                                            </li>
-                                                                            <li style="background-color: #ff6f31;width: {{data.scores.1.perc}}%;">
-                                                                                <div class="chart__label">
-                                                                                        {{data.scores.1.val}}
-                                                                                </div>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                        
-                                                        
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                        </div>
-                                    </div>
+                        
+                                                    <span style="font-size: 40px;" class="card-title">Overall Rating</span>
+                        <br>
+                                                    <div class="rcorners1"><div class="label"><br>56%</div>
+                                                </div>
+                                                      
+                        
+                                                    <div id="chart1div"></div>
+                        
+                                                </div>
+                                            </div>
+                                        
+                                </center>
                                 </div>
-                    
                             </div>
                     
                             <div id="teachers" class="section scrollspy">
-                                <div>
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col s3">
-                                                <h3>Teachers</h3>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
+                                
                                     <!--
                                     <div class="row">
                                         <div class="col s3">
@@ -327,46 +460,44 @@
                                     </div>
                                     -->
                                     <div class="card">
-                                        <div style="background-color: rgb(216, 215, 215); height: 100px;" class="card-content">
-                                            <div class="row">
-                                                <div class="col s9">
-                                                    <p style="font-size: 30px;" >Teachers</p>
-                                                </div>
-                                                <div class="col s3">
-                                                    <a href="#!" class="secondary-content btn-large btn">
-                                                        Export to PDF
-                                                        <i class="material-icons right">open_in_new</i>
-                                                    </a>
+                                            <div style="background-color: rgb(7, 7, 99); height: 100px;" class="card-content">
+                                                <div class="row">
+                                                    <div class="col s1">
+                                                        <p style="font-size: 30px;color:white" >Teachers</p>
+                                                    </div>
+                                                
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="card-action">
-                                                <div class="teachersTable">
-                                                        <table class="striped bordered highlight responsive-table" id="table_id">
-                                                            <thead>
-                                                                <tr>
-                
-                                                                    {% for cols in data.columns %}
-                                                                    <th>{{cols}}</th>
-                                                                    {% endfor %}
-                                                                </tr>
-                                                            </thead>
-                                    
-                                                            <tbody>
-                                                                {% for faculty in data.score %}
+                                            
+                                                   
+                                                    
+                                            <div class="card-action" style="background-color:#e9f3f8">
+                                                    
+                                                    <div class="teachersTable">
+                                                            <table class="striped bordered highlight responsive-table" id="table_id">
+                                                                
+                                                                <thead>
                                                                     <tr>
-                                                                        {% for score in faculty %}
-                                                                        <td>{{score}}</td>
+                    
+                                                                        {% for cols in data.columns %}
+                                                                        <th>{{cols}}</th>
                                                                         {% endfor %}
                                                                     </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                                                </thead>
+                                        
+                                                                <tbody>
+                                                                    {% for faculty in data.score %}
+                                                                        <tr>
+                                                                            {% for score in faculty %}
+                                                                            <td>{{score}}</td>
+                                                                            {% endfor %}
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
                             
 
 
@@ -410,7 +541,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
-    <script src="{% static 'jquery.star-rating-svg.js' %}"></script>    
 
     <script>
         $(document).ready(function () {
@@ -419,32 +549,6 @@
             $('.scrollspy').scrollSpy();
             $('select').material_select();
 
-            $(".my-rating").starRating({
-                starSize: 30,
-                useFullStars: false,
-                activeColor: "#5A5A5A",
-                callback: function (currentRating, $el) {
-                    
-                }
-            });
-
-            {% for form,data in context.items %}
-            
-            var rate = parseFloat("{{data.overall.avgs}}");
-            var diff = rate - Math.floor(rate);
-            console.log(rate, diff);
-            if (diff >= 0.75) {
-                rate = rate + (1 - diff) + '.0';
-            } else if (diff <= 0.25) {
-                rate = rate - diff + '.0';
-            } else {
-                rate = Math.floor(rate) + 0.5;
-            }
-            $('#rating_h{{form.id}}').text(rate);
-            $('.rating{{form.id}}').starRating('setRating', rate);
-            console.log('rating called');
-            $('.rating{{form.id}}').starRating('setReadOnly', true);
-            {% endfor %}
             var collapsed = false;
             $('#toggleSideNav').click(function () {
 
@@ -461,7 +565,7 @@
             $('#table_id').dataTable({
                 'processing':true,
                 dom: 'Bfrtip',
-                
+                buttons : ['pdf', 'excel', 'print'],
             });
 
             $('.dt-button').css("background-color", "red");
@@ -482,8 +586,6 @@
                 $('#mySidenav').children('.side').toggle();
                 $('#toggleSideNav i').text('chevron_right')
             }
-
-            $('#table_id_filter').find('label').attr('style','font-size:20px;');
         });
     </script>
 </body>

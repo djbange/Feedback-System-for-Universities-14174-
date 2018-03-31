@@ -73,7 +73,7 @@
             </a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li>
-                    <a class="waves-effect waves-light btn-flat">
+                    <a href="{% url 'logout_view' %}" class="waves-effect waves-light btn-flat">
                         <i class="material-icons left">exit_to_app</i>
                         <b>Logout</b>
                     </a>
@@ -81,7 +81,7 @@
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 <li>
-                    <a class="waves-effect waves-light btn-flat">
+                    <a href="{% url 'logout_view' %}" class="waves-effect waves-light btn-flat" >
                         <i class="material-icons left">exit_to_app</i>
                         <b>Logout</b>
                     </a>
@@ -152,9 +152,9 @@
                                             <a data-answer="4" class="waves-effect waves-teal btn answer-btn-4 light-green collect_answer">Exceeds Expectations</a>
                                             <a data-answer="5" class="waves-effect waves-teal btn answer-btn-5 green collect_answer">Excellent</a>
                                         </div>
-                                    </div>
-                                    <div id="question{{ question.id }}" class="center-align row">
-                                        <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
+                                        <div id="question{{ question.id }}" class="center-align row">
+                                            <a href="#" class="red white-text waves-effect waves-light btn del_question">Delete Question</a>
+                                        </div>
                                     </div>
                                 </li>
                                 {% endfor %}
@@ -305,31 +305,36 @@
                     type = 'Academics';
                 } else if ($('#Q1').find("select").text() == 2) {
                     type = 'Faculty';
-                } else {
+                } else if ($('#Q1').find("select").text() == 3) {
                     type = 'Infrastructure';
-                }
+                } else {
+                    type = "";
+                    alert("Type cannot be blank");
+                } 
                 console.log('jquery called');
-                $.ajax({
-                    url:'ajax/question',
-                    method:'POST',
-                    data:{
-                        'formid':"{{form.id}}",
-                        'csrfmiddlewaretoken':jQuery("[name=csrfmiddlewaretoken]").val(),
-                        'text':$('#textarea1').val(),
-                        'type':type,
-                        'tagid':$('#Q2').find("select").val()
-                    },
-                    success:function(response){
-                        console.log('question saved');
-                        //location.reload();
-                    },
-                    error:function(jqxhr, exception){
-                        console.log(jqxhr);
-                        console.log(exception);
-                        console.log('ajax error');
-                    }
-                });
-                console.log('ajax called');
+                if( type != "") {
+                    $.ajax({
+                        url:'ajax/question',
+                        method:'POST',
+                        data:{
+                            'formid':"{{form.id}}",
+                            'csrfmiddlewaretoken':jQuery("[name=csrfmiddlewaretoken]").val(),
+                            'text':$('#textarea1').val(),
+                            'type':type,
+                            'tagid':$('#Q2').find("select").val()
+                        },
+                        success:function(response){
+                            console.log('question saved');
+                            //location.reload();
+                        },
+                        error:function(jqxhr, exception){
+                            console.log(jqxhr);
+                            console.log(exception);
+                            console.log('ajax error');
+                        }
+                    });
+                    console.log('ajax called');
+                }
             })
 
             $('.answer-btn-1').click(function () {

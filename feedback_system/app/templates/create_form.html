@@ -75,17 +75,18 @@
             <a href="#" data-activates="mobile-demo" class="button-collapse">
                 <i class="material-icons">menu</i>
             </a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <ul id="nav-mobile" class="right hide-on-med-and-down" >
                 <li>
-                    <a class="waves-effect waves-light btn-flat">
+                    <a class="waves-effect waves-light btn-flat" href = "{% url 'logout_view' %}">
                         <i class="material-icons left">exit_to_app</i>
+                         
                         <b>Logout</b>
                     </a>
                 </li>
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 <li>
-                    <a class="waves-effect waves-light btn-flat">
+                    <a href="{% url 'logout_view' %}" class="waves-effect waves-light btn-flat">
                         <i class="material-icons left">exit_to_app</i>
                         <b>Logout</b>
                     </a>
