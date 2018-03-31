@@ -188,8 +188,8 @@ def auditor_dashboard(request):
 	forms   = list(FeedbackForm.objects.filter(is_published=True))
 	departments = list( Department.objects.all() )
 	for form in forms:
+		context[form] = {}
 		if list(FeedbackResponse.objects.filter(question__feedback_form=form)):
-			context[form] = {}
 			types = list(QuestionType.objects.all())
 			types_overall_rating=list(FeedbackResponse.objects.filter(question__feedback_form =form).values('question__type__title').annotate(avg =Avg('answer')))
 			for type_ in types_overall_rating:

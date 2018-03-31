@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{% static 'app/datatables-buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'star-rating-svg.css' %}">    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auditor Dashboard</title>
 
@@ -259,14 +260,14 @@
 
 <nav>
     <div class="nav-wrapper">
-        <a href="{%url 'auditor_dashboard'%}" class="brand-logo">`````````````````Auditor Dashboard</a>
+        <a href="{%url 'auditor_dashboard'%}" style="margin-left:260px;" class="brand-logo">Auditor Dashboard</a>
         <a href="#" data-activates="mobile-demo" class="button-collapse">
             <i class="material-icons">menu</i>
         </a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li>
                 <a class='dropdown-button' data-activates="dropdown1" href="#">
-                    <i class="material-icons left">person</i><strong>Hello, Auditor 1<i class="material-icons right">arrow_drop_down</i></strong></a>
+                    <i class="material-icons left">person</i><strong>Hello, Auditor1<i class="material-icons right">arrow_drop_down</i></strong></a>
             </li>
             <li>
                 <a href=""></a>
@@ -359,16 +360,9 @@
                 <div class="col s10">
                     <h4>Form Title</h4>
                 </div>
-                <div class="col s2">
-                    <a href="#!" class="buttons secondary-content btn-flat">
-                        EXPORT
-                        <i class="material-icons right">open_in_new</i>
-                    </a>
-                </div>
             </div>
     
             <div class="card-content">
-                <center>
                 <div class="row">
                     <div class="row">
                         <div class="col s12">
@@ -377,53 +371,90 @@
                     
                                 <div>
                                     <div class="row">
-                                      
                                         <div class="col s6">
-                                            <div class="card-panel">
+                                            <div class="card-panel ">
                     
-                                                <span style="font-size: 40px;" class="card-title">Categorial Rating</span>
-                    
-                                                <ul class="bar-graph">
-                                                
+                                                <table class="centered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="font-size: 30px;">Types</th>
+                                                            <th style="font-size: 30px;">Overall Rating</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
                                                     {% for overall in data.types_overall_rating %}
-                                                
-                                                    <li style="background-color:{{overall.color}};height: {{overall.avg}}%;" title="50">
-                                                                    <div class="percent" style="font-size:36px">{{overall.avg}}<span>%</span></div>
-                                                                    <div class="description">{{overall.question__type__title}}</div>
-                                                                  </li>
-                                                         
-                                                                                                                 
-                                                  
-                                                {% endfor %}
-                                                
-                                                
-                                                    </ul>
-                                                    
-                                                  
-                                                  
-                    
-                                                <div id="chart1div"></div>
-                    
+                                                        <tr>
+                                                            <td style="font-size: 20px;">{{overall.question__type__title}}</td>
+                                                            <td style="font-size: 20px; color: {{overall.color}};">{{overall.avg}}%</td>                                                            
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
-<center>
                                         <div class="col s6">
                                                 <div class="card-panel">
-                        
-                                                    <span style="font-size: 40px;" class="card-title">Overall Rating</span>
-                        <br>
-                                                    <div class="rcorners1"><div class="label"><br>56%</div>
-                                                </div>
-                                                      
-                        
-                                                    <div id="chart1div"></div>
-                        
-                                                </div>
-                                            </div>
-                                        
-                                </center>
+                                                        <p class="card-title">Overall</p>
+                                                        <div class="row">
+                                                            <div style="border-right: 1px solid rgb(214, 208, 208);" class="col s4 center-align">
+                                                                <div>
+                                                                    <h1 style="font-size: 60px;">{{data.overall.avgs}}</h1>
+                                                                </div>
+                                                                <div class="my-rating rating{{form.id}}"></div>
+                                                                <div>
+                                                                    <h5>
+                                                                        <i class="material-icons">person</i>{{data.scores.6.val}} Total
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                        
+                                                            <div class="col s8">
+                                                        
+                                                        
+                                                        
+                                                                <div class="charts">
+                                                                    <div class="chart chart--dev">
+                                                        
+                                                                        <ul class="chart--horiz">
+                                                        
+                                                                            <li style="background-color: #88b131;width: {{data.scores.5.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                     {{data.scores.5.val}}
+                                                                                </div>
+                                                                            </li>
+                                                        
+                                                                            <li style="background-color: #99cc00;width: {{data.scores.4.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                    {{data.scores.4.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <li style="background-color: #ffcf02;width: {{data.scores.3.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                    {{data.scores.3.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <li style="background-color: #ff9f02;width: {{data.scores.2.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                        {{data.scores.2.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                            <li style="background-color: #ff6f31;width: {{data.scores.1.perc}}%;">
+                                                                                <div class="chart__label">
+                                                                                        {{data.scores.1.val}}
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                        
+                                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
                     
                             <div id="teachers" class="section scrollspy">
                                 
@@ -460,7 +491,7 @@
                                     </div>
                                     -->
                                     <div class="card">
-                                            <div style="background-color: rgb(7, 7, 99); height: 100px;" class="card-content">
+                                            <div style="background-color:#1a237e; height: 100px;" class="card-content">
                                                 <div class="row">
                                                     <div class="col s1">
                                                         <p style="font-size: 30px;color:white" >Teachers</p>
@@ -541,6 +572,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+    <script src="{% static 'jquery.star-rating-svg.js' %}"></script>    
 
     <script>
         $(document).ready(function () {
@@ -549,7 +581,35 @@
             $('.scrollspy').scrollSpy();
             $('select').material_select();
 
+            $(".my-rating").starRating({
+                starSize: 30,
+                useFullStars: false,
+                activeColor: "#5A5A5A",
+                callback: function (currentRating, $el) {
+                    
+                }
+            });
+
+            {% for form,data in context.items %}
+            
+            var rate = parseFloat("{{data.overall.avgs}}");
+            var diff = rate - Math.floor(rate);
+            console.log(rate, diff);
+            if (diff >= 0.75) {
+                rate = rate + (1 - diff) + '.0';
+            } else if (diff <= 0.25) {
+                rate = rate - diff + '.0';
+            } else {
+                rate = Math.floor(rate) + 0.5;
+            }
+            $('#rating_h{{form.id}}').text(rate);
+            $('.rating{{form.id}}').starRating('setRating', rate);
+            console.log('rating called');
+            $('.rating{{form.id}}').starRating('setReadOnly', true);
+            {% endfor %}
+
             var collapsed = false;
+            doExpanded();
             $('#toggleSideNav').click(function () {
 
                 if (collapsed) {
@@ -567,6 +627,8 @@
                 dom: 'Bfrtip',
                 buttons : ['pdf', 'excel', 'print'],
             });
+
+
 
             $('.dt-button').css("background-color", "red");
 
