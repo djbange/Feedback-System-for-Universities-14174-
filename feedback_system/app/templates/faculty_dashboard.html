@@ -10,6 +10,7 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
         <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+        
         <link rel="stylesheet" href="{% static 'star-rating-svg.css' %}">
     
     <style>
@@ -150,13 +151,7 @@
 </head>
 <body>
 
-    <!-- Resources -->
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
-
+   
     
 
     <div class="navbar-fixed">
@@ -375,7 +370,6 @@
                                 <div id="tag_wise" class="section scrollspy">
                                     <div class="card">
                                         <div style="background-color: rgb(235, 235, 235);" class="card-content">
-
                                             <h4>Tag Wise Evaluation</h4>
                                         </div>
                                         <div class="card-action">
@@ -409,9 +403,18 @@
                                 </div>
                         
                                 <div id="overall" class="section scrollspy">
-                                    
+                                    <div class="card">
+                                        <div style="background-color: rgb(235, 235, 235);" class="card-content">
+                                            <h4>Tag Wise Evaluation</h4>                                            
+                                        </div>
+                                        <div class="card-action">
+                                            <canvas id="tag-wise"></canvas>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+
                             <div class="col hide-on-small-only m3 l2">
                                 <ul class="section table-of-contents pinned">
                                     <li>
@@ -435,11 +438,7 @@
     {% endfor %}
 
    
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
-    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -480,6 +479,66 @@
                 activeColor: "#5A5A5A",
                 callback: function (currentRating, $el) {
                     
+                }
+            });
+
+            var ctx = document.getElementById('tag-wise').getContext('2d');
+            var chart = new Chart(ctx, {
+                
+                type: 'line',
+                
+                
+                data: {
+                    labels: ["Feedback-1", "Feedback-2", "Feedback-3", "Feedback-4", "Feedback-5"],
+                    datasets: [{
+                        label: "Punctuality",
+                        markerType: "square",
+                        lineTension: 0,
+                        fill: false,
+                        borderColor: 'rgb(128, 255, 128)',
+                        data: [2.5, 1, 5, 2, 2, 3, 5],
+                    },
+                    {
+                        label: "Motivation",
+                        markerType: "square",
+                        lineTension: 0,
+                        fill: false,
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: [3, 1.5, 5, 2.8, 1, 1.3, 2.5],
+                    },
+                    {
+                            label: "Core Knowledge",
+                            markerType: "square",
+                            lineTension: 0,
+                            fill: false,
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: [3.1, 3.1, 3.1, 3.1, 3.1, 3.1, 3.1],
+                    },
+                    {
+                            label: "Evaluation Fairness",
+                            markerType: "square",
+                            lineTension: 0,
+                            fill: false,
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: [1,2,3,4, 5, 4, 3],
+                    },
+                    {
+                            label: "Average",
+                            markerType: "square",
+                            lineTension: 0,
+                            fill: false,
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: [5, 4, 3, 2, 1, 2, 3],
+                    }
+
+
+                    
+            ]},
+
+                // Configuration options go here
+                options: {
+                    theme: 'light2',
+                    markerType: "square",
                 }
             });
             
