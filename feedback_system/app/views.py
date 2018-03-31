@@ -126,6 +126,8 @@ def faculty_dashboard(request):
 						context[form][teacher_subject.subject]['responses'][question]['scores'][i]['perc'] = round((context[form][teacher_subject.subject]['responses'][question]['scores'][i]['val']/maxv)*100,2)
 	
 					for data in temp:
+						if question.tag == None:
+							continue
 						if(data['avg'] > 3.5):#not working
 							print("adding strength")
 							context[form][teacher_subject.subject]['strength'].add(question.tag)
