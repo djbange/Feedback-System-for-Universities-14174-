@@ -222,7 +222,8 @@ for dept,dept_code in DEPARTMENTS.items():
                 gen_student(topc_counter,dept,year,div)
                 topc_counter += 1
 
-forms = ["Feedback Form 1", "Feedback Form 2", "Feedback Form 3"]
+forms = ["Feedback Form 1", "Feedback Form 2", "Feedback Form 3",
+            "Feedback Form 4", "Feedback Form 5"]
 for title in forms:
     form  = models.FeedbackForm(title=title,is_active=True,is_published=True)
     form.save()

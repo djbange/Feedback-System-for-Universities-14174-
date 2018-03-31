@@ -209,8 +209,9 @@ def auditor_dashboard(request):
 				else:
 					type_['color'] = 'red'
 			context[form]['types_overall_rating'] =types_overall_rating
-		overall_list=FeedbackResponse.objects.filter(question__feedback_form=form).values("question__feedback_form").annotate(avgs=Avg('answer')).first()
-			
+		overall_list=FeedbackResponse.objects.filter(question__feedback_form=form).values("question__feedback_form").annotate(avgs=Avg('answer'))[0]
+		# print("HELLO WORLD", overall_list)
+		overall_list['avgs'] = round(overall_list['avgs'], 2)
 		context[form]['scores'] = {}
 		context[form]['scores'][6] = {'val':0,'perc':100}
 		maxv = 0
@@ -229,54 +230,55 @@ def auditor_dashboard(request):
 				context[form]['scores'][i]['perc'] = 0
 					
 		context[form]['overall']=overall_list
-	context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
-	context[form]['score'] = []
-	context[form]['columns'] = ["Name", "Dept"]
-	de_dupe = {}
-	for t in context[form]['tags']:
-		if t.tag is not None and t.tag.tag_title not in de_dupe:
-			de_dupe[t.tag.tag_title] = 1
-			context[form]['columns'].append(t.tag.tag_title)
-	context[form]['columns'].append("Overall")
-
-	for faculty in Faculty.objects.all():
-		cur_faculty = []
-		cur_faculty.append(faculty.profile.name)
-		cur_faculty.append(TeacherSubject.objects.filter(teacher=faculty)[0].classroom.department.name)
-		
-		tag_merge = {}
-		for resp in context[form]['tags']:
-				cur_resp = list(FeedbackResponse.objects.filter(question__feedback_form=form,
-												teacher_subject__teacher=faculty, question=resp)
-												.values("question__tag__tag_title")
-												.annotate(avgs=Avg('answer')))
-				if cur_resp[0]['question__tag__tag_title'] not in tag_merge:
-					tag_merge[cur_resp[0]['question__tag__tag_title']] = []
-				tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
-		
-		print("Akshay tag_merge:", tag_merge)
-		tag_score = {}
-		overall = 0
-		for k, v in tag_merge.items():
-			cur_avg = 0
-			for val in v:
-				cur_avg += val
-			cur_avg /= len(v)
-			tag_score[k] = round(cur_avg, 2)
-			overall += cur_avg
-		if tag_score:
-			overall /= len(tag_score.keys())
-			overall = round(overall, 2)
-		print("Akshay tag_score:", tag_score)
+		context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
+		context[form]['score'] = []
+		context[form]['columns'] = ["Name", "Dept"]
 		de_dupe = {}
-		for resp in context[form]['tags']:
-			if resp.tag is not None and resp.tag.tag_title not in de_dupe:
-				de_dupe[resp.tag.tag_title] = 1
-				cur_tag = resp.tag.tag_title
-				cur_faculty.append(tag_score[cur_tag])
-		print("Akshay cur_faculty:", cur_faculty)
-		cur_faculty.append(overall)
-		context[form]['score'].append(cur_faculty)
+		for t in context[form]['tags']:
+			if t.tag is not None and t.tag.tag_title not in de_dupe:
+				de_dupe[t.tag.tag_title] = 1
+				context[form]['columns'].append(t.tag.tag_title)
+		context[form]['columns'].append("Overall")
+
+		for faculty in Faculty.objects.all():
+			cur_faculty = []
+			cur_faculty.append(faculty.profile.name)
+			cur_faculty.append(TeacherSubject.objects.filter(teacher=faculty)[0].classroom.department.name)
+			
+			tag_merge = {}
+			for resp in context[form]['tags']:
+					cur_resp = list(FeedbackResponse.objects.filter(question__feedback_form=form,
+													teacher_subject__teacher=faculty, question=resp)
+													.values("question__tag__tag_title")
+													.annotate(avgs=Avg('answer')))
+					if cur_resp[0]['question__tag__tag_title'] not in tag_merge:
+						tag_merge[cur_resp[0]['question__tag__tag_title']] = []
+					tag_merge[cur_resp[0]['question__tag__tag_title']].append(cur_resp[0]["avgs"])
+			
+			print("Akshay tag_merge:", tag_merge)
+			tag_score = {}
+			overall = 0
+			for k, v in tag_merge.items():
+				cur_avg = 0
+				for val in v:
+					cur_avg += val
+				cur_avg /= len(v)
+				tag_score[k] = round(cur_avg, 2)
+				overall += cur_avg
+			if tag_score:
+				overall /= len(tag_score.keys())
+				overall = round(overall, 2)
+			print("Akshay tag_score:", tag_score)
+			de_dupe = {}
+			for resp in context[form]['tags']:
+				if resp.tag is not None and resp.tag.tag_title not in de_dupe:
+					de_dupe[resp.tag.tag_title] = 1
+					cur_tag = resp.tag.tag_title
+					cur_faculty.append(tag_score[cur_tag])
+			print("Akshay cur_faculty:", cur_faculty)
+			cur_faculty.append(overall)
+			context[form]['score'].append(cur_faculty)
+		print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n\n", context[form])
 	
 	return render_to_response('auditor_dashboard.html',locals())
 
