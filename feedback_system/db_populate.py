@@ -222,30 +222,32 @@ for dept,dept_code in DEPARTMENTS.items():
                 gen_student(topc_counter,dept,year,div)
                 topc_counter += 1
 
-form  = models.FeedbackForm(title='Feedback Form',is_active=True,is_published=True)
-form.save()
-print('form created')
+forms = ["Feedback Form 1", "Feedback Form 2", "Feedback Form 3"]
+for title in forms:
+    form  = models.FeedbackForm(title=title,is_active=True,is_published=True)
+    form.save()
+    print('%s created' % title)
 
-for i in range(0, len(questions), 3):
-    question = questions[i].strip()
-    question_type = models.QuestionType.objects.get(title=questions[i+1].strip())
-    tag = questions[i+2].strip()
-    cur_tag = None
-    try:
-        cur_tag = models.Tag.objects.get(tag_title=tag)
-    except:
-        if cur_tag == None and tag != "None":
-            cur_tag = models.Tag(tag_title=tag)
-            cur_tag.save()
-    models.Question(text=question,type=question_type,tag=cur_tag,feedback_form=form).save()
-    print('question created:', question, cur_tag)
+    for i in range(0, len(questions), 3):
+        question = questions[i].strip()
+        question_type = models.QuestionType.objects.get(title=questions[i+1].strip())
+        tag = questions[i+2].strip()
+        cur_tag = None
+        try:
+            cur_tag = models.Tag.objects.get(tag_title=tag)
+        except:
+            if cur_tag == None and tag != "None":
+                cur_tag = models.Tag(tag_title=tag)
+                cur_tag.save()
+        models.Question(text=question,type=question_type,tag=cur_tag,feedback_form=form).save()
+        print('question created:', question, cur_tag)
 
-all_questions = models.Question.objects.filter(feedback_form=form)
-question_dict = {}
-for a_q in all_questions:
-    if not a_q.type.title in question_dict:
-        question_dict[a_q.type.title] = []
-    question_dict[a_q.type.title].append(a_q)
+    all_questions = models.Question.objects.filter(feedback_form=form)
+    question_dict = {}
+    for a_q in all_questions:
+        if not a_q.type.title in question_dict:
+            question_dict[a_q.type.title] = []
+        question_dict[a_q.type.title].append(a_q)
 
-for student in models.Student.objects.all():
-    fill_feedback(student, form, question_dict, models.TeacherSubject.objects.filter(classroom=student.classroom))
+    for student in models.Student.objects.all():
+        fill_feedback(student, form, question_dict, models.TeacherSubject.objects.filter(classroom=student.classroom))
