@@ -310,42 +310,24 @@
                                         <div>
                                             <div class="card-panel ">
                                                 
-                                                <table class="centered">
+                                                <table class="centered striped highlight">
                                                     <thead style="background-color: rgb(235, 235, 235);" >
                                                         <tr>
                                                             <th style="font-size: 30px; color: green;">Strengths</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for tag in subdata.strength %}
-                                                        <tr>
-                                                            <td style="font-size: 20px;" >{{tag}}</td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="card-panel ">
-                                                
-                                                <table class="centered">
-                                                    <thead style="background-color: rgb(235, 235, 235);">
-                                                        <tr>
                                                             <th style="font-size: 30px; color: red;">Weaknesses</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {% for tag in subdata.weakness %}
+                                                        {% for tag in subdata.strength_weakness %}
                                                         <tr>
-                                                            <td style="font-size: 20px;" >{{tag}}</td>
+                                                            <td style="font-size: 20px;">{{tag.0}}</td>
+                                                            <td style="font-size: 20px;">{{tag.1}}</td>
                                                         </tr>
                                                         {% endfor %}
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
-                                        
                                     </div>
 
                                     <div class="card">
