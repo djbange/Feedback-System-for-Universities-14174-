@@ -261,7 +261,7 @@
                                                         <div>
                                                             <h1 style="font-size: 60px;">{{subdata.overall.avg.0.avg}}</h1>
                                                         </div>
-                                                        <div class="my-rating rating{{subject.id}}"></div>
+                                                        <div class="my-rating rating{{form.id}}-{{subject.id}}"></div>
                                                         <div>
                                                             <h5>
                                                                 <i class="material-icons">person</i>{{subdata.overall.scores.6.val}} Total
@@ -581,10 +581,10 @@
             } else {
                 rate = Math.floor(rate) + 0.5;
             }
-            $('#rating_h{{subject.id}}').text(rate);
-            $('.rating{{subject.id}}').starRating('setRating', rate);
+            $('#rating_h{{form.id}}-{{subject.id}}').text(rate);
+            $('.rating{{form.id}}-{{subject.id}}').starRating('setRating', rate);
             console.log('rating called');
-            $('.rating{{subject.id}}').starRating('setReadOnly', true);
+            $('.rating{{form.id}}-{{subject.id}}').starRating('setReadOnly', true);
             {% endfor %}
             {% endfor %}
 
