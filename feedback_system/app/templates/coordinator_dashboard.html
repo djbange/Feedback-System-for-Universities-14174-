@@ -18,7 +18,7 @@
                 <a href="{% url 'copy_form' form.id %}" class="waves-effect waves-light btn-flat">Copy</a>
                 {% if not form.is_published %}
                 <a href="{% url 'edit_form' form.id %}" class="waves-effect waves-light btn-flat">Edit</a>
-                <a href="#modal{{form.id}}" class="waves-effect waves-light btn-flat modal-trigger">Publish</a>
+                <a href="#modalp{{form.id}}" class="waves-effect waves-light btn-flat modal-trigger">Publish</a>
                 <a href="{% url 'activate_form' form.id %}" class="waves-effect disabled waves-light btn" style="margin-left:7px;margin-right:7px;">Activate</a>
                 {% else %}
                 <a href="" class="waves-effect waves-light btn-flat disabled">Edit</a>
@@ -30,6 +30,11 @@
                 <a href="{% url 'deactivate_form' form.id %}" class="waves-effect waves-light btn red white-text">Deactivate</a>
                 {% endif %}
                 {% endif %}
+                {% if not form.is_published %}
+                <a href="#modald{{form.id}}" class="btn-flat modal-trigger"><i class="material-icons">delete</i></a>
+                {% else %}
+                <a href="" class="btn-flat modal-trigger"><i class="material-icons disabled">delete_forever</i></a>
+                {% endif %}
                 </div>
             </li>
             {% endfor %}
@@ -39,13 +44,23 @@
     </div>
     
     {% for form in forms %}
-    <div id="modal{{form.id}}" class="modal modal-fixed-footer">
+    <div id="modalp{{form.id}}" class="modal">
         <div class="modal-content">
           <h4>Are you sure?</h4>
           <p>Publishing a form will make it uneditable but you will be able to activate or deactivate it.</p>
         </div>
         <div class="modal-footer">
         <a href="{% url 'publish_form' form.id %}" class="modal-action modal-close waves-effect btn-flat green waves-light">Yes</a>
+        <a href="#!" class="modal-action modal-close waves-effect btn-flat red white-text waves-light">No</a>
+        </div>
+    </div>
+    <div id="modald{{form.id}}" class="modal">
+        <div class="modal-content">
+          <h4>Are you sure?</h4>
+          <p>Deleting a form will remove it permanently and you will not be able to retrieve it.</p>
+        </div>
+        <div class="modal-footer">
+        <a href="{% url 'delete_form' form.id %}" class="modal-action modal-close waves-effect btn-flat green waves-light">Yes</a>
         <a href="#!" class="modal-action modal-close waves-effect btn-flat red white-text waves-light">No</a>
         </div>
     </div>

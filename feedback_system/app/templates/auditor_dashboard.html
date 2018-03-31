@@ -344,12 +344,6 @@
         
         {% endfor %}
     </div>
-    
-    <div>
-        <a id="toggleSideNav" class="waves-effect waves-light">
-            <i style="color: black;" class="material-icons left">chevron_right</i>
-        </a>
-    </div>
 </div>
 
 {% for form,data in context.items %}
@@ -610,18 +604,7 @@
 
             var collapsed = false;
             doExpanded();
-            $('#toggleSideNav').click(function () {
-
-                if (collapsed) {
-                    doCollapsed();
-                } else {
-                    doExpanded();
-                }
-
-                collapsed = !collapsed;
-
-            });
-
+           
             $('#table_id').dataTable({
                 'processing':true,
                 dom: 'Bfrtip',

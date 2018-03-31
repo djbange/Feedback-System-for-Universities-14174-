@@ -213,11 +213,14 @@ def auditor_dashboard(request):
 			if maxv < context[form]['scores'][i]['val']:
 				maxv = context[form]['scores'][i]['val']
 
-		for i in range(1,6):
-			context[form]['scores'][i]['perc'] = round((context[form]['scores'][i]['val']/maxv)*100,2)
+		if maxv:
+			for i in range(1,6):
+				context[form]['scores'][i]['perc'] = round((context[form]['scores'][i]['val']/maxv)*100,2)
+		else:
+			for i in range(1,6):
+				context[form]['scores'][i]['perc'] = 0
+					
 		context[form]['overall']=overall_list
-		print(context[form]['overall'])
-				
 	context[form]['tags'] = list(Question.objects.filter(feedback_form=form,type__title='Faculty').only('tag'))
 	context[form]['score'] = []
 	context[form]['columns'] = ["Name", "Dept"]
@@ -253,8 +256,9 @@ def auditor_dashboard(request):
 			cur_avg /= len(v)
 			tag_score[k] = round(cur_avg, 2)
 			overall += cur_avg
-		overall /= len(tag_score.keys())
-		overall = round(overall, 2)
+		if tag_score:
+			overall /= len(tag_score.keys())
+			overall = round(overall, 2)
 		print("Akshay tag_score:", tag_score)
 		de_dupe = {}
 		for resp in context[form]['tags']:
@@ -379,6 +383,12 @@ def edit_form_title(request):
 	return JsonResponse({'success':'true'})
 
 @coordinator_required
+def delete_form(request,formid):
+	form = FeedbackForm.objects.get(pk=formid)
+	form.delete()
+	return redirect('coordinator_dashboard')
+
+@coordinator_required
 def edit_form(request, formid=None):
 	ACADEMICS = QuestionType.objects.get(title='Academics')
 	INFRASTRUCTURE = QuestionType.objects.get(title='Infrastructure')
@@ -387,7 +397,8 @@ def edit_form(request, formid=None):
 		form = FeedbackForm.objects.get(pk=formid)
 	else:
 		form = FeedbackForm(title='Blank Form')
-	form.save()
+		form.save()
+		return redirect('/edit_form/'+str(form.id))
 	questions = Question.objects.filter(feedback_form=form)
 	acadquestions = questions.filter(type=ACADEMICS)
 	infraquestions = questions.filter(type=INFRASTRUCTURE)

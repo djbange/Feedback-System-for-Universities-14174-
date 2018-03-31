@@ -217,12 +217,6 @@
             </a>
             {% endif %} {% endfor %}
         </div>
-    
-        <div>
-            <a id="toggleSideNav" class="waves-effect waves-light">
-                <i style="color: black;" class="material-icons left">chevron_right</i>
-            </a>
-        </div>
     </div>
 
     
@@ -520,17 +514,7 @@
             });
 
             var collapsed = false;
-            $('#toggleSideNav').click(function () {
-
-                if (collapsed) {
-                    doCollapsed();
-                } else {
-                    doExpanded();
-                }
-
-                collapsed = !collapsed;
-
-            });
+            doExpanded();
 
             function doExpanded() {
                 $('#mySidenav').css('width', '250px');

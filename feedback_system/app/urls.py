@@ -17,6 +17,7 @@ urlpatterns = [
 	path('auditor_dashboard/ajax', views.ajax_data_table, name='ajax_data_table'),
 	path('coordinator_profile/', views.coordinator_profile, name='coordinator_profile'),
 	path('coordinator_dashboard/', views.coordinator_dashboard, name='coordinator_dashboard'),
+	path('delete_form/<int:formid>', views.delete_form, name='delete_form'),
 	path('publish_form/<int:formid>', views.publish_form, name='publish_form'),
 	path('activate_form/<int:formid>', views.activate_form, name='activate_form'),
 	path('deactivate_form/<int:formid>', views.deactivate_form, name='deactivate_form'),
