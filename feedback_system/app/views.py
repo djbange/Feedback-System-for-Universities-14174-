@@ -107,8 +107,6 @@ def faculty_dashboard(request):
 				context[form][teacher_subject.subject]['responses'] = {}
 				context[form][teacher_subject.subject]['strength'] = set()
 				context[form][teacher_subject.subject]['weakness'] = set()
-				weak_count = 0
-				strong_count = 0
 				responses = list(FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question__feedback_form=form))
 				for response in responses:
 					question = response.question
@@ -131,11 +129,9 @@ def faculty_dashboard(request):
 						if(data['avg'] > 3.5):#not working
 							print("adding strength")
 							context[form][teacher_subject.subject]['strength'].add(question.tag)
-							strong_count += 1
 						else:
 							print("adding weakness")
 							context[form][teacher_subject.subject]['weakness'].add(question.tag)
-							weak_count += 1
 					scores= {}
 					for i in range(1,6):
 							scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
@@ -146,13 +142,14 @@ def faculty_dashboard(request):
 				context[form][teacher_subject.subject]['strength'])
 			context[form][teacher_subject.subject]['weakness'] = list(
 				context[form][teacher_subject.subject]['weakness'])
-			while(weak_count != strong_count):
-				if(weak_count > strong_count):
+			while(len(context[form][teacher_subject.subject]['strength']) != len(context[form][teacher_subject.subject]['weakness'])):
+				if(len(context[form][teacher_subject.subject]['strength']) < len(context[form][teacher_subject.subject]['weakness'])):
 					context[form][teacher_subject.subject]['strength'].append("")
-					strong_count += 1
 				else:
 					context[form][teacher_subject.subject]['weakness'].append("")
-					weak_count += 1			
+
+			print(context[form][teacher_subject.subject]['strength'])
+			print(context[form][teacher_subject.subject]['weakness'])
 			strength_weakness = []
 			for i in range(len(context[form][teacher_subject.subject]['strength'])):
 				strength_weakness.append(
