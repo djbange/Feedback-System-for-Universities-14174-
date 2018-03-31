@@ -153,7 +153,7 @@ def faculty_dashboard(request):
 
 @faculty_required
 def faculty_profile(request):
-	return render(request, 'faculty_profile_new.html')
+	return render(request, 'faculty_profile.html')
 
 @auditor_required
 def auditor_profile(request):
