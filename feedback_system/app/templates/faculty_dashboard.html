@@ -481,64 +481,45 @@
                     
                 }
             });
-
             var ctx = document.getElementById('tag-wise').getContext('2d');
+
+            
             var chart = new Chart(ctx, {
                 
                 type: 'line',
                 
                 
                 data: {
-                    labels: ["Feedback-1", "Feedback-2", "Feedback-3", "Feedback-4", "Feedback-5"],
-                    datasets: [{
-                        label: "Punctuality",
-                        markerType: "square",
-                        lineTension: 0,
-                        fill: false,
-                        borderColor: 'rgb(128, 255, 128)',
-                        data: [2.5, 1, 5, 2, 2, 3, 5],
-                    },
-                    {
-                        label: "Motivation",
-                        markerType: "square",
-                        lineTension: 0,
-                        fill: false,
-                        borderColor: 'rgb(255, 99, 132)',
-                        data: [3, 1.5, 5, 2.8, 1, 1.3, 2.5],
-                    },
-                    {
-                            label: "Core Knowledge",
+                    labels: [ "f1", "f2"],
+                    datasets: [    
+                        {% for k, v in graphs.items %}
+                        {
+                            label: "{{k}}",
                             markerType: "square",
                             lineTension: 0,
                             fill: false,
-                            borderColor: 'rgb(255, 99, 132)',
-                            data: [3.1, 3.1, 3.1, 3.1, 3.1, 3.1, 3.1],
-                    },
-                    {
-                            label: "Evaluation Fairness",
-                            markerType: "square",
-                            lineTension: 0,
-                            fill: false,
-                            borderColor: 'rgb(255, 99, 132)',
-                            data: [1,2,3,4, 5, 4, 3],
-                    },
-                    {
-                            label: "Average",
-                            markerType: "square",
-                            lineTension: 0,
-                            fill: false,
-                            borderColor: 'rgb(255, 99, 132)',
-                            data: [5, 4, 3, 2, 1, 2, 3],
-                    }
-
-
-                    
-            ]},
+                            borderColor: '#' + parseInt(Math.random() * 0xffffff).toString(16),
+                            data: [
+                            {%for val in v %}
+                                {{val}},
+                            {% endfor %}
+                            ],
+                        },
+                        {% endfor%}
+                    ] 
+                },
 
                 // Configuration options go here
                 options: {
                     theme: 'light2',
                     markerType: "square",
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    },
                 }
             });
             

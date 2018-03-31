@@ -71,11 +71,17 @@ def events(request):
 @faculty_required
 def faculty_dashboard(request):
 	#formid
-	context = {}
+	context = {}  
 	forms = list(FeedbackForm.objects.filter(is_published=True))
 	teacher_subjects = list(TeacherSubject.objects.filter(teacher=request.user.faculty))
+	compare_tags = {}
 	for form in forms:
 		if list(FeedbackResponse.objects.filter(question__feedback_form=form)):
+			data = list(FeedbackResponse.objects.filter(teacher_subject__teacher=request.user.faculty,question__feedback_form=form).values('question__tag__tag_title').annotate(avg=Avg('answer')))
+			for tag in data:
+				if tag['question__tag__tag_title'] not in compare_tags:
+					compare_tags[tag['question__tag__tag_title']] = []
+				compare_tags[tag['question__tag__tag_title']].append(tag['avg'])
 			context[form] = {}
 			for teacher_subject in teacher_subjects:
 				context[form][teacher_subject.subject] = {}
@@ -138,8 +144,8 @@ def faculty_dashboard(request):
 					for i in range(1,6):
 							scores[i] = FeedbackResponse.objects.filter(teacher_subject=teacher_subject,question=question,answer =i).count()
 					
-			print(context[form][teacher_subject.subject]['strength'])
-			print(context[form][teacher_subject.subject]['weakness'])
+			#print(context[form][teacher_subject.subject]['strength'])
+			#print(context[form][teacher_subject.subject]['weakness'])
 			context[form][teacher_subject.subject]['strength'] = list(
 				context[form][teacher_subject.subject]['strength'])
 			context[form][teacher_subject.subject]['weakness'] = list(
@@ -150,8 +156,8 @@ def faculty_dashboard(request):
 				else:
 					context[form][teacher_subject.subject]['weakness'].append("")
 
-			print(context[form][teacher_subject.subject]['strength'])
-			print(context[form][teacher_subject.subject]['weakness'])
+			#print(context[form][teacher_subject.subject]['strength'])
+			#print(context[form][teacher_subject.subject]['weakness'])
 			strength_weakness = []
 			for i in range(len(context[form][teacher_subject.subject]['strength'])):
 				strength_weakness.append(
@@ -163,7 +169,7 @@ def faculty_dashboard(request):
 			sentiments = {}
 			for response in responses:
 				sentiments[response] = get_sentiments(response.answer)
-			print("Akshay sentiments:", sentiments)
+			#print("Akshay sentiments:", sentiments)
 			# context = {
 			# "positive":pos,
 			# "negative":neg,
@@ -171,7 +177,7 @@ def faculty_dashboard(request):
 
 
 		#print(context)
-
+	graphs=compare_tags
 	return render_to_response( 'faculty_dashboard.html',locals())
 
 
