@@ -8,8 +8,10 @@ from app.final_new import get_tags
 classroom -> 1 dept -> 4 years -> 3 div / year
 FeedbackForm -> 1
 '''
+topc_counter = 1
+topf_counter = 1
 
-PARAMS = [1,2,3,3,3,4,4,5,5]
+PARAMS = [1,2,3,3,4,4,4,5,5]
 
 first_names = []
 last_names = []
@@ -88,16 +90,6 @@ SUBS = {
         'RTES'
     ]}
 }
-
-TAGS = [
-    "Relevance",
-    "Dedication",
-    "Usefulness",
-    "Effectiveness",
-    "Communication",
-    "Punctuality",
-    "Motivation"
-]
 
 def gen_subs():
     print('generating subjects')
@@ -208,7 +200,8 @@ gen_coordinator()
 for dept,dept_code in DEPARTMENTS.items():
     faculties = []
     for i in range(15):
-        faculties.append(gen_faculty(dept, i))
+        faculties.append(gen_faculty(dept, topf_counter))
+        topf_counter += 1
     subs = set(SUBS[dept].keys())
     faculty_subject = []
     temp_subs = []
@@ -226,7 +219,8 @@ for dept,dept_code in DEPARTMENTS.items():
                                                     subject=f_s[1])
                 teacher_subject.save()
             for i in range(1,5):
-                gen_student(i,dept,year,div)
+                gen_student(topc_counter,dept,year,div)
+                topc_counter += 1
 
 form  = models.FeedbackForm(title='Feedback Form',is_active=True,is_published=True)
 form.save()
@@ -240,11 +234,11 @@ for i in range(0, len(questions), 3):
     try:
         cur_tag = models.Tag.objects.get(tag_title=tag)
     except:
-        pass
-    if cur_tag is None and tag != "None":
-        cur_tag = models.Tag(tag_title=tag).save()
+        if cur_tag == None and tag != "None":
+            cur_tag = models.Tag(tag_title=tag)
+            cur_tag.save()
     models.Question(text=question,type=question_type,tag=cur_tag,feedback_form=form).save()
-    print('question created:', question)
+    print('question created:', question, cur_tag)
 
 all_questions = models.Question.objects.filter(feedback_form=form)
 question_dict = {}
