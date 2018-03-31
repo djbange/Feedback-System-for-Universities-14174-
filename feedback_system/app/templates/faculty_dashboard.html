@@ -21,6 +21,26 @@
             height: 80%;
         }
 
+        .tabs{
+            height: 60px; 
+            
+            color: #1a237e;
+        }
+        
+        
+        .tabs .tab a{
+            color: #1a237e;
+            font-size: 20px;
+        }
+
+        .tabs .tab a.active {
+            
+            color: #1a237e;
+        }
+        .tabs .indicator {
+            background-color:#1a237e;
+        }
+
         .sidenav {
             height: 100%;
             width: 110px;
@@ -32,6 +52,7 @@
             overflow-x: hidden;
             transition: 0.5s;
             padding-top: 60px;
+            
         }
         .collection-item{
             height: 50px;
@@ -66,18 +87,22 @@
         .positive{
             background-color: rgb(201, 255, 201);
             border-radius: 10px;
+            margin-right: 100px;
         }
         .positive-chip{
-            background-color: rgb(88, 185, 88);
+            background-color: rgb(120, 209, 120);
             font-size: 20px;
+            
         }
         .negative{
             background-color: rgb(255, 201, 201);
             border-radius: 10px;
+            margin-left: 100px;
         }
         .negative-chip{
-            background-color: rgb(185, 88, 88);
+            background-color: rgb(226, 135, 135);
             font-size: 20px;
+            
         }
         .card-title{
             font-size: 20px;
@@ -222,7 +247,7 @@
                                     <div class="row">
                                         <div>
                                             <div class="card-panel">
-                                                <p class="card-title">Overall</p>
+                                                <div style="font-size: 35px;" class="card-title">Overall</div>
                                                 <div class="row">
                                                     <div style="border-right: 1px solid rgb(214, 208, 208);" class="col s4 center-align">
                                                         <div>
@@ -246,7 +271,7 @@
                                                 
                                                                 <ul class="chart--horiz">
                                                 
-                                                                    <li style="background-color: #88b131;width: {{subdata.overall.scores.5.perc}}%;">
+                                                                    <li style="background-color: #88b131; width: {{subdata.overall.scores.5.perc}}%;">
                                                                         <div class="chart__label">
                                                                              {{subdata.overall.scores.5.val}}
                                                                         </div>
@@ -286,7 +311,7 @@
                                             <div class="card-panel ">
                                                 
                                                 <table class="centered">
-                                                    <thead>
+                                                    <thead style="background-color: rgb(235, 235, 235);" >
                                                         <tr>
                                                             <th style="font-size: 30px; color: green;">Strengths</th>
                                                         </tr>
@@ -305,7 +330,7 @@
                                             <div class="card-panel ">
                                                 
                                                 <table class="centered">
-                                                    <thead>
+                                                    <thead style="background-color: rgb(235, 235, 235);">
                                                         <tr>
                                                             <th style="font-size: 30px; color: red;">Weaknesses</th>
                                                         </tr>
@@ -323,157 +348,95 @@
                                         
                                     </div>
 
-                                    <h4>Question Wise Evaluation</h4>
-
-                                    <div class="row">
-                                        {% for question,qdata in subdata.responses.items %}
-                                        <div class="col s6">
-                                            <div class="card-panel">
-                                                <span class="card-title">{{question.text}} </span>
-                                                
-                                                <div class="charts">
-                                                        <div class="chart chart--dev">
+                                    <div class="card">
+                                        <div style="background-color: rgb(235, 235, 235);" class="card-content">
                                             
-                                                            <ul class="chart--horiz">
+                                            <h4>Question Wise Evaluation</h4>
+                                        </div>
+                                        <div class="card-action">
                                             
-                                                                <li style="background-color: #88b131;width: {{qdata.scores.5.perc}}%;">
-                                                                    <div class="chart__label">
-                                                                         {{qdata.scores.5.val}}
-                                                                    </div>
-                                                                </li>
+                                            <div class="row">
+                                                {% for question,qdata in subdata.responses.items %}
+                                                <div class="col s6">
+                                                    <div class="card-panel">
+                                                        <span class="card-title">{{question.text}} </span>
                                             
-                                                                <li style="background-color: #99cc00;width: {{qdata.scores.4.perc}}%;">
-                                                                    <div class="chart__label">
-                                                                        {{qdata.scores.4.val}}
-                                                                    </div>
-                                                                </li>
-                                                                <li style="background-color: #ffcf02;width: {{qdata.scores.3.perc}}%;">
-                                                                    <div class="chart__label">
-                                                                        {{qdata.scores.3.val}}
-                                                                    </div>
-                                                                </li>
-                                                                <li style="background-color: #ff9f02;width: {{qdata.scores.2.perc}}%;">
-                                                                    <div class="chart__label">
+                                                        <div class="charts">
+                                                            <div class="chart chart--dev">
+                                            
+                                                                <ul class="chart--horiz">
+                                            
+                                                                    <li style="background-color: #88b131;width: {{qdata.scores.5.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                            {{qdata.scores.5.val}}
+                                                                        </div>
+                                                                    </li>
+                                            
+                                                                    <li style="background-color: #99cc00;width: {{qdata.scores.4.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                            {{qdata.scores.4.val}}
+                                                                        </div>
+                                                                    </li>
+                                                                    <li style="background-color: #ffcf02;width: {{qdata.scores.3.perc}}%;">
+                                                                        <div class="chart__label">
+                                                                            {{qdata.scores.3.val}}
+                                                                        </div>
+                                                                    </li>
+                                                                    <li style="background-color: #ff9f02;width: {{qdata.scores.2.perc}}%;">
+                                                                        <div class="chart__label">
                                                                             {{qdata.scores.2.val}}
-                                                                    </div>
-                                                                </li>
-                                                                <li style="background-color: #ff6f31;width: {{qdata.scores.1.perc}}%;">
-                                                                    <div class="chart__label">
+                                                                        </div>
+                                                                    </li>
+                                                                    <li style="background-color: #ff6f31;width: {{qdata.scores.1.perc}}%;">
+                                                                        <div class="chart__label">
                                                                             {{qdata.scores.1.val}}
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                            
-                                            
-        
-        
-        <!-- Chart code 
-        <script>
-                var chart1{{subject.id}} = AmCharts.makeChart("overall{{subject.id}}", {
-                    "type": "pie",
-                    "theme": "light",
-                    "dataProvider": [{
-                        "title": "Rating",
-                        "value": {{subdata.overall.0.avg}},
-                    },
-                    {
-                        "title": " not Rating",
-                        "value": 2,
-                    }],
-                    "titleField": "title",
-                    "valueField": "value",
-                    "labelRadius": 5,
-                    "text": 30,
-                    "radius": "42%",
-                    "innerRadius": "70%",
-                    "labelText": "[[title]]",
-                    
-                });
-
-        console.log({{qdata.scores}});
-
-        var chart{{question.id}} = AmCharts.makeChart("chartdivquestion{{question.id}}", {
-            "type": "serial",
-            "theme": "light",
-            "legend": {
-                "horizontalGap": 10,
-                "maxColumns": 1,
-                "position": "right",
-                "useGraphSettings": true,
-                "markerSize": 10
-            },
-            "dataProvider": [
-            {
-                "answer": "Response",
-                {% for score,count in qdata.scores.items %}
-                "{{score}}":{{count}},
-                {% endfor %} 
-            },
-            
-            ],
-            "graphs": [
-            {% for score,count in qdata.scores.items %}
-            {
-                "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
-                "fillAlphas": 0.8,
-                "labelText": "[[value]]",
-                "lineAlpha": 0.3,
-                "title": {{score}},
-                "type": "column",
-		        "color": "#000000",
-                "valueField": "{{score}}"
-            },
-            {% endfor %} 
-            ],
-            "rotate": true,
-            "categoryField": "answer",
-            "categoryAxis": {
-                "gridPosition": "start",
-                "axisAlpha": 0,
-                "gridAlpha": 0,
-                "position": "left"
-            },
-        });
-        </script>
-        
-        <div id="chartdivquestion{{question.id}}"></div>
-        <!-- HTML -->
-                                                
+                                                </div>
+                                                {% endfor %}
                                             </div>
                                         </div>
-                                        {% endfor %}
                                     </div>
                                         
                                 </div>
                         
                                 <div id="tag_wise" class="section scrollspy">
-                                    <h4>Tag Wise Evaluation</h4>
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="positive col s5 flow-text">
-                                                <div class="positive-chip chip">Punctuality</div>
-                                                <br>This teacher is punctual, can clear our doubts and personal guidance is at its best.
-                                            </div>
-                                            <div class="negative col s5 push-s1 flow-text">
-                                                <div class="negative-chip chip">Motivation</div>
-                                                <br>This Teacher does not encourage different answers, demotivates us, and makes fun of us.
-                                            </div>
-                                        
+                                    <div class="card">
+                                        <div style="background-color: rgb(235, 235, 235);" class="card-content">
+
+                                            <h4>Tag Wise Evaluation</h4>
                                         </div>
-                                        <div class="row">
-                                            <div class="positive col s5 flow-text">
-                                                <div class="positive-chip chip">Interesting</div>
-                                                <br>Try's hard to make subject interesting, organises activites to grab attention.
-                                            </div>
-                                            <div class="negative col s5 push-s1 flow-text">
-                                                <div class="negative-chip chip">Compentancy</div>
-                                                <div class="negative-chip chip">Core Knowledge</div>
-                                                <br>This teacher cannot teach, no core knowledge and competency.
+                                        <div class="card-action">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="positive col s5 flow-text">
+                                                        <div class="positive-chip chip">Punctuality</div>
+                                                        <br>This teacher is punctual, can clear our doubts and personal guidance is at its best.
+                                                    </div>
+                                                    <div class="negative col s5 push-s1 flow-text">
+                                                        <div class="negative-chip chip">Motivation</div>
+                                                        <br>This Teacher does not encourage different answers, demotivates us, and makes fun of us.
+                                                    </div>
+                                            
+                                                </div>
+                                                <div class="row">
+                                                    <div class="positive col s5 flow-text">
+                                                        <div class="positive-chip chip">Interesting</div>
+                                                        <br>Try's hard to make subject interesting, organises activites to grab attention.
+                                                    </div>
+                                                    <div class="negative col s5 push-s1 flow-text">
+                                                        <div class="negative-chip chip">Compentancy</div>
+                                                        <div class="negative-chip chip">Core Knowledge</div>
+                                                        <br>This teacher cannot teach, no core knowledge and competency.
+                                                    </div>
+                                                </div>
+                                            
                                             </div>
                                         </div>
-                                        
                                     </div>
                                 </div>
                         
