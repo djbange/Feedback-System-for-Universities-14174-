@@ -97,6 +97,162 @@
         .sidenav {padding-top: 15px;}
         .sidenav a {font-size: 18px;}
         }
+
+
+.bar-graph {
+  padding: 0;
+  width: 70%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: flex-end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  height: 425px;
+  margin: 0;
+}
+
+.bar-graph li {
+  display: block;
+  padding: 1.5625rem 0;
+  position: relative;
+  text-align: center;
+  vertical-align: bottom;
+  border-radius: 4px 4px 0 0;
+  max-width: 30%;
+  height: 100%;
+  margin: 0 1.8% 0 0;
+  -webkit-flex: 1 1 15%;
+      -ms-flex: 1 1 15%;
+          flex: 1 1 15%;
+}
+
+.bar-graph .bar-graph-axis {
+  -webkit-flex: 1 1 8%;
+      -ms-flex: 1 1 8%;
+          flex: 1 1 8%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.bar-graph .bar-graph-label {
+  margin: 0;
+  background-color: none;
+  color: #8a8a8a;
+  position: relative;
+}
+
+@media print, screen and (min-width: 40em) {
+  .bar-graph .bar-graph-label:before, .bar-graph .bar-graph-label:after {
+    content: "";
+    position: absolute;
+    border-bottom: 1px dashed #8a8a8a;
+    top: 0;
+    left: 0;
+    height: 50%;
+    width: 20%;
+  }
+}
+
+@media print, screen and (min-width: 40em) and (min-width: 64em) {
+  .bar-graph .bar-graph-label:before, .bar-graph .bar-graph-label:after {
+    width: 30%;
+  }
+}
+
+@media print, screen and (min-width: 40em) {
+  .bar-graph .bar-graph-label:after {
+    left: auto;
+    right: 0;
+  }
+}
+
+.bar-graph .percent {
+  letter-spacing: -3px;
+  opacity: 0.4;
+  width: 100%;
+  font-size: 1.875rem;
+  position: absolute;
+}
+
+@media print, screen and (min-width: 40em) {
+  .bar-graph .percent {
+    font-size: 3.875rem;
+  }
+}
+
+.bar-graph .percent span {
+  font-size: 1.875rem;
+}
+
+.bar-graph .description {
+  font-weight: 800;
+  opacity: 0.5;
+  text-transform: uppercase;
+  width: 100%;
+  font-size: 3px;
+  bottom: 20px;
+  position: absolute;
+  font-size: 15;
+  overflow: hidden;
+}
+
+.bar-graph .bar.primary {
+  border: 1px solid #1779ba;
+  background: linear-gradient(#2196e3, #1779ba 70%);
+}
+
+.bar-graph .bar.secondary {
+  border: 1px solid #767676;
+  background: linear-gradient(#909090, #767676 70%);
+}
+
+.bar-graph .bar.success {
+  border: 1px solid #3adb76;
+  background: linear-gradient(#65e394, #3adb76 70%);
+}
+
+.bar-graph .bar.warning {
+  border: 1px solid #ffae00;
+  background: linear-gradient(#ffbe33, #ffae00 70%);
+}
+
+.bar-graph .bar.alert {
+  border: 1px solid #cc4b37;
+  background: linear-gradient(#d67060, #cc4b37 70%);
+}
+
+.rcorners1 {
+    border-radius: 50%;
+    background: #73AD21;
+    padding: 20px; 
+    width: 200px;
+    height: 200px; 
+    opacity: 0.6;
+    font-size: 25px;
+    vertical-align: middle; 
+    
+}
+
+.label {
+    display:inline-block;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    height: 17px; 
+    padding: 2px 3px 2px 3px;
+    text-align: center;
+    min-width: 16px;
+  }
+
+
     </style>
 </head>
 
@@ -141,12 +297,11 @@
             </li>
         </ul>
     </div>
+
 </nav>
 
-<div id="mySidenav" class="sidenav">
-    <div class="side" style="display: none;">
-    
-        <div style="margin: 0 10px 0 10px">
+    <div class="row">
+        <div class="col s2">
             <ul class="collection with-header">
                 <li class="collection-header">
                     <h4>Evaluations</h4>
@@ -158,33 +313,14 @@
                 {% endfor %}
             </ul>
         </div>
-    
-    </div>
-    
-    <div class="side">
-        {% for form in forms %}
-            {% if form.is_active %}
-            <a href="#!" class="collapsed-btn btn-flat">
-                    <i style="color: green;" class="material-icons">visibility</i>
-            </a>
-            {% else %}
-            <a href="#!" class="collapsed-btn btn-flat">
-                    <i style="color: red;" class="material-icons">visibility</i>
-                </a>
-            {% endif %}
-        
-        
-        {% endfor %}
-    </div>
-</div>
-
+<div class="col s10">
 {% for form,data in context.items %}
 <div id="form{{form.id}}" class="page">
-    <div class="maincard container row">
+    <div class="maincard row">
         <div class="card">
             <div class="maincard_header">
                 <div class="col s10">
-                    <h4>Form Title</h4>
+                    <h4>{{form.title}}</h4>
                 </div>
             </div>
     
@@ -283,12 +419,7 @@
                                 </div>
                     
                             <div id="teachers" class="section scrollspy">
-                                <div>
-                                    <div class="container">
-                                        <div class="row">
-                                            
-                                        </div>
-                                    </div>
+                                
                                     <!--
                                     <div class="row">
                                         <div class="col s3">
@@ -330,34 +461,36 @@
                                                 
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="card-action">
-                                                <div class="teachersTable">
-                                                        <table class="striped bordered highlight responsive-table" id="table_id">
-                                                            <thead>
-                                                                <tr>
-                
-                                                                    {% for cols in data.columns %}
-                                                                    <th>{{cols}}</th>
-                                                                    {% endfor %}
-                                                                </tr>
-                                                            </thead>
-                                    
-                                                            <tbody>
-                                                                {% for faculty in data.score %}
+                                            
+                                                   
+                                                    
+                                            <div class="card-action" style="background-color:#e9f3f8">
+                                                    
+                                                    <div class="teachersTable">
+                                                            <table class="striped bordered highlight responsive-table" id="table_id{{form.id}}">
+                                                                
+                                                                <thead>
                                                                     <tr>
-                                                                        {% for score in faculty %}
-                                                                        <td>{{score}}</td>
+                    
+                                                                        {% for cols in data.columns %}
+                                                                        <th>{{cols}}</th>
                                                                         {% endfor %}
                                                                     </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                                                </thead>
+                                        
+                                                                <tbody>
+                                                                    {% for faculty in data.score %}
+                                                                        <tr>
+                                                                            {% for score in faculty %}
+                                                                            <td>{{score}}</td>
+                                                                            {% endfor %}
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
                             
 
 
@@ -373,20 +506,9 @@
     </div>
 
 </div>
+</div>
+</div>
 {% endfor %}
-
-<div>
-    <ul class="section table-of-contents pinned">
-        <li>
-            <a href="#overall">Overall</a>
-        </li>
-        <li>
-            <a href="#teachers">Teachers</a>
-        </li>
-        <li>
-            <a href="#allquestions">All Questions</a>
-        </li>
-    </ul>
 </div>
 
 
@@ -467,17 +589,6 @@
             {% endfor %}
 
             var collapsed = false;
-            doExpanded();
-           
-            $('#table_id').dataTable({
-                'processing':true,
-                dom: 'Bfrtip',
-                buttons: ['pdf', 'excel', 'print']
-                
-            });
-
-
-
             $('.dt-button').css("background-color", "red");
 
             function doExpanded() {
@@ -496,8 +607,6 @@
                 $('#mySidenav').children('.side').toggle();
                 $('#toggleSideNav i').text('chevron_right')
             }
-
-            $('#table_id_filter').find('label').attr('style','font-size:20px;');
         });
     </script>
 </body>
