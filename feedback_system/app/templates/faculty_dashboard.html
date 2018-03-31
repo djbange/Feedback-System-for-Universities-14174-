@@ -187,18 +187,8 @@
                         <h4>Evaluations</h4>
                     </li>
                     {% for form in forms %}
-                    <li class="collection-item dismissable">
-                        <div>{{form.title}} {% if form.is_active %}
-                            <a href="#!" class="secondary-content">
-                                <i style="color: green;" class="material-icons">visibility</i>
-                            </a>
-                            {% else %}
-                            <a href="#!" class="secondary-content">
-                                <i style="color: red;" class="material-icons">visibility</i>
-                            </a>
-                            {% endif %}
-    
-                        </div>
+                    <li class="collection-item">
+                        <div>{{form.title}}<a href="#" data-formid="{{form.id}}" class="eval-btn secondary-content"><i class="material-icons small">send</i></a></div>
                     </li>
                     {% endfor %}
                 </ul>
@@ -207,22 +197,24 @@
         </div>
     
         <div class="side">
-            {% for form in forms %} {% if form.is_active %}
-            <a href="#!" class="collapsed-btn btn-flat">
+            {% for form in forms %} 
+            {% if form.is_active %}
+            <a href="#!" id="btn-form{{form.id}}" class="collapsed-btn btn-flat">
                 <i style="color: green;" class="material-icons">visibility</i>
             </a>
             {% else %}
-            <a href="#!" class="collapsed-btn btn-flat">
-                <i style="color: red;" class="material-icons">visibility</i>
+            <a href="#!" id="btn-form{{form.id}}" class="collapsed-btn btn-flat">
+                <i style="color: red;" class="material-icons"> visibility</i>
             </a>
-            {% endif %} {% endfor %}
+            {% endif %} 
+            {% endfor %}
         </div>
     </div>
 
     
     
     {% for form,data in context.items %}
-    <div id="form{{form.id}}">
+    <div id="form{{form.id}}" class="page">
             <div class="row">
                 <div class="col s12">
                     <ul class="tabs">
@@ -442,16 +434,6 @@
     </div>
     {% endfor %}
 
-    <div id="form2">
-        
-    </div>
-
-    <div id="form3">
-        <div class="container">
-            
-        </div>
-    </div>
-
    
     <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script src="https://www.amcharts.com/lib/3/pie.js"></script>
@@ -467,6 +449,30 @@
     
     <script>
         $(document).ready(function () {
+            $('.page').each(function(index){
+                if(index != 0){
+                    $(this).hide();
+                }
+            })
+
+            $('.collection-item:first').addClass('active');
+
+            $('.eval-btn').click(function(){
+                console.log('btn clicked');
+                $('.page').each(function(index){
+                   $(this).hide(); 
+                });
+
+                console.log($(this).data('formid'));
+                $('#form'+$(this).data('formid')).show();
+
+                $('.collection-item').each(function(index){
+                    $(this).removeClass('active');
+                });
+
+                $(this).parent().parent().addClass('active');
+            });
+
             {% for form,data in context.items %}
             $(".my-rating").starRating({
                 starSize: 30,
