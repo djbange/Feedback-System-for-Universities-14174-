@@ -309,20 +309,9 @@
                     <h4>Evaluations</h4>
                 </li>
                 {% for form in forms %}
-                <li class="collection-item dismissable">
-                    <div>{{form.title}}
-                    {% if form.is_active %}
-                    <a href="#!" class="secondary-content">
-                            <i style="color: green;" class="material-icons">visibility</i>
-                    </a>
-                    {% else %}
-                    <a href="#!" class="secondary-content">
-                            <i style="color: red;" class="material-icons">visibility</i>
-                        </a>
-                    {% endif %}
-                        
-                    </div>
-                </li>
+                    <li class="collection-item">
+                        <div>{{form.title}}<a href="#" data-formid="{{form.id}}" class="eval-btn secondary-content"><i class="material-icons small">send</i></a></div>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
@@ -347,7 +336,7 @@
 </div>
 
 {% for form,data in context.items %}
-<div>
+<div id="form{{form.id}}" class="page">
     <div class="maincard container row">
         <div class="card">
             <div class="maincard_header">
@@ -499,7 +488,7 @@
                                             <div class="card-action" style="background-color:#e9f3f8">
                                                     
                                                     <div class="teachersTable">
-                                                            <table class="striped bordered highlight responsive-table" id="table_id">
+                                                            <table class="striped bordered highlight responsive-table" id="table_id{{form.id}}">
                                                                 
                                                                 <thead>
                                                                     <tr>
@@ -584,6 +573,30 @@
                 }
             });
 
+            $('.page').each(function(index){
+                if(index != 0){
+                    $(this).hide();
+                }
+            })
+
+            $('.collection-item:first').addClass('active');
+
+            $('.eval-btn').click(function(){
+                console.log('btn clicked');
+                $('.page').each(function(index){
+                   $(this).hide(); 
+                });
+
+                console.log($(this).data('formid'));
+                $('#form'+$(this).data('formid')).show();
+
+                $('.collection-item').each(function(index){
+                    $(this).removeClass('active');
+                });
+
+                $(this).parent().parent().addClass('active');
+            });
+
             {% for form,data in context.items %}
             
             var rate = parseFloat("{{data.overall.avgs}}");
@@ -600,16 +613,16 @@
             $('.rating{{form.id}}').starRating('setRating', rate);
             console.log('rating called');
             $('.rating{{form.id}}').starRating('setReadOnly', true);
+            $('#table_id{{form.id}}').dataTable({
+                'processing':true,
+                dom: 'Bfrtip',
+                buttons : ['pdf', 'excel', 'print'],
+            });
             {% endfor %}
 
             var collapsed = false;
             doExpanded();
            
-            $('#table_id').dataTable({
-                'processing':true,
-                dom: 'Bfrtip',
-                buttons : ['pdf', 'excel', 'print'],
-            });
 
 
 
